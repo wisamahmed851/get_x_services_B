@@ -10,7 +10,6 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { VehicleRegistrationService } from './vehicle-registration.service';
-// import { UpdateVehicleRegistrationDto } from './dto/update-vehicle-registration.dto';
 import { CreateVehicleRegistrationDto } from './dtos/vehicle-registration.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
@@ -37,15 +36,15 @@ export class VehicleRegistrationController {
     return this.vehicleService.findAll();
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //     return this.vehicleService.findOne(id);
-  // }
+//   @Get(':id')
+//   findOne(@Param('id') id: string) {
+//     return this.vehicleService.findOne(id);
+//   }
 
-  //   @Patch(':id')
-  //   update(@Param('id') id: string, @Body() dto: UpdateVehicleRegistrationDto) {
-  //     return this.vehicleService.update(id, dto);
-  //   }
+//   @Patch(':id')
+//   update(@Param('id') id: string, @Body() dto: UpdateVehicleRegistrationDto) {
+//     return this.vehicleService.update(id, dto);
+//   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
