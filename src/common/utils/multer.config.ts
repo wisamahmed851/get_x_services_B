@@ -6,7 +6,9 @@ export const multerConfig = (destination: string) => ({
     destination: resolve(process.cwd(), destination),
     filename: (req, file, cb) => {
       const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      cb(null, uniqueSuffix + extname(file.originalname));
+      const ext = extname(file.originalname);
+      const filename = `${file.fieldname}-${uniqueSuffix}${ext}`;
+      cb(null, filename);
     },
   }),
 });
