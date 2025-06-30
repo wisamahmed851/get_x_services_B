@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsNull } from 'typeorm';
 
 export class CreateUserDto{
 
@@ -8,6 +9,7 @@ export class CreateUserDto{
 
     @IsNotEmpty()
     @IsEmail()
+    
     email: string;
 
     @IsNotEmpty()
@@ -22,6 +24,35 @@ export class CreateUserDto{
     @IsNotEmpty()
     city: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     image: string;
+}
+
+export class UpdateUserDto{
+    @IsOptional()
+    @IsNotEmpty()
+    name?: string;
+
+    @IsOptional()
+    @IsEmail()
+    email?: string;
+
+    @IsOptional()
+    password?: string;
+
+    @IsOptional()
+    phone?: string;
+
+    @IsOptional()
+    address?: string;
+
+    @IsOptional()
+    city?: string;
+
+    @IsOptional()
+    image?: string;
+
+    @IsOptional()
+    @Type(() => Number)
+    id?: number;
 }

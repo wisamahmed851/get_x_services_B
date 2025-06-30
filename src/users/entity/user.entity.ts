@@ -18,7 +18,7 @@ export class User {
   phone: string;
 
   @Column({ nullable: true, type: 'text' })
-  adress: string;
+  address: string;
 
   @Column({ nullable: true })
   gender: string;
