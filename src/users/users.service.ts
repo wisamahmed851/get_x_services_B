@@ -4,6 +4,7 @@ import { User } from './entity/user.entity';
 import { Not, Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
 import { throwError } from 'rxjs';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -16,9 +17,12 @@ export class UsersService {
     const existing = await this.userRepository.findOne({
       where: { email: user.email },
     });
-    console.log(existing);
     if (existing) {
       throw new BadRequestException('User With This Email Already Exists');
+    }
+    if (user.password) {
+      const saltRounds = 10;
+      user.password = await bcrypt.hash(user.password, saltRounds);
     }
     const newUser = this.userRepository.create(user);
     return await this.userRepository.save(newUser);
@@ -61,6 +65,10 @@ export class UsersService {
       if (emailExists) {
         throw new BadRequestException('Email already exists');
       }
+    }
+    if (user.password) {
+      const saltRounds = 10;
+      user.password = await bcrypt.hash(user.password, saltRounds);
     }
     if (!user.image) {
       user.image = existing.image;
