@@ -10,9 +10,9 @@ import {
     UploadedFile,
 } from '@nestjs/common';
 import { VehicleRegistrationService } from './vehicle-registration.service';
-import { CreateVehicleRegistrationDto, UpdateVehicleRegistrationDto } from './dtos/vehicle-registration.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
+import { CreateVehicleRegistrationDto, UpdateVehicleRegistrationDto } from './entity/dtos/vehicle-registration.dto';
 
 @Controller('vehicle-registrations')
 export class VehicleRegistrationController {
@@ -48,7 +48,7 @@ export class VehicleRegistrationController {
         @Body() dto: UpdateVehicleRegistrationDto,
         @UploadedFile() file?: Express.Multer.File,
     ) {
-        const image = file?.filename;
+        const image = file?.filename ?? dto.image ?? '';
 
         return this.vehicleService.update(id, { ...dto, image });
     }

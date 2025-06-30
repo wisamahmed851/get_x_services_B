@@ -23,6 +23,14 @@ export class VehicleRegistration {
     @Column({ nullable: true })
     image: string;
 
+    @Column({
+        type: 'smallint',
+        default: 1,
+        nullable: false,
+        comment:' 0 = inactive, 1 = active',
+    })
+    status: string;
+
     @Column({ type: 'date' })
     created_at: String;
 
