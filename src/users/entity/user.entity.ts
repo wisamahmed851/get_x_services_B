@@ -24,6 +24,9 @@ export class User {
   gender: string;
 
   @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
   image: string;
 
   @Column({
