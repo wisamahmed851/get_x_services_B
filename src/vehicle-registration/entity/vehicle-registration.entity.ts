@@ -2,9 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 
 @Entity('vehicle_registrations')
 export class VehicleRegistration {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
-
+    @PrimaryGeneratedColumn()
+    id: number  ;
 
     @Column({ nullable: true })
     vehicleName: string;
@@ -13,7 +12,7 @@ export class VehicleRegistration {
     vehiclemodel: string; // e.g., car, bike, truck
 
     @Column({ nullable: true })
-    registrationNumber: Date;
+    registrationNumber: string;
 
     @Column({ nullable: true })
     color: string;
@@ -37,7 +36,4 @@ export class VehicleRegistration {
         this.created_at = onlyDate;
         this.updated_at = onlyDate;
     }
-
-
-
 }

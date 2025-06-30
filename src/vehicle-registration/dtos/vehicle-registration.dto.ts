@@ -5,5 +5,4 @@ export class CreateVehicleRegistrationDto {
   color: string;
   company: string;
   image: string;
-  date: string;
 }
