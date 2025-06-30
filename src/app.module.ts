@@ -1,14 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { config } from 'process';
-import { VehicleRegistrationService } from './vehicle-registration/vehicle-registration.service';
-import { VehicleRegistrationController } from './vehicle-registration/vehicle-registration.controller';
 import { VehicleRegistrationModule } from './vehicle-registration/vehicle-registration.module';
 
 @Module({
@@ -31,6 +26,7 @@ import { VehicleRegistrationModule } from './vehicle-registration/vehicle-regist
       }),
     }),
     UsersModule,
+    VehicleRegistrationModule,
   ],
   controllers: [AppController],
   providers: [AppService,],
