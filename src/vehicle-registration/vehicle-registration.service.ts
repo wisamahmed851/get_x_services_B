@@ -3,19 +3,39 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { VehicleRegistration } from './entity/vehicle-registration.entity';
 import { Repository } from 'typeorm';
 import { CreateVehicleRegistrationDto, UpdateVehicleRegistrationDto } from './dtos/vehicle-registration.dto';
+import { UserVehicle } from './entity/user-vehicle.entity';
+import { User } from 'src/users/entity/user.entity';
 
 @Injectable()
 export class VehicleRegistrationService {
     constructor(
         @InjectRepository(VehicleRegistration)
         private vehicleRepo: Repository<VehicleRegistration>,
+
+        @InjectRepository(User)
+        private userRepo: Repository<User>,
+
+        @InjectRepository(UserVehicle)
+        private userVehicleRepo: Repository<UserVehicle>,
     ) { }
 
     async create(dto: CreateVehicleRegistrationDto) {
-        const vehicle = this.vehicleRepo.create(dto);
-        return await this.vehicleRepo.save(vehicle);
-    }
+        const user = await this.userRepo.findOne({ where: { id: dto.userId } });
+        if (!user) throw new NotFoundException('User not found');
 
+        const { userId, ...vehicleData } = dto;
+
+        const vehicle = this.vehicleRepo.create(vehicleData);
+        const savedVehicle = await this.vehicleRepo.save(vehicle);
+
+        const userVehicle = this.userVehicleRepo.create({
+            user,
+            vehicle: savedVehicle,
+        });
+        await this.userVehicleRepo.save(userVehicle);
+
+        return savedVehicle;
+    }
     async findOne(id: number): Promise<VehicleRegistration> {
         const vehicle = await this.vehicleRepo.findOne({ where: { id } });
         if (!vehicle) throw new NotFoundException(`Vehicle with ID ${id} not found`);
@@ -33,7 +53,7 @@ export class VehicleRegistrationService {
     ) {
         const vehicle = await this.findOne(id); // will throw if not found
 
-        if(!dto.image){
+        if (!dto.image) {
             dto.image = vehicle.image;
         }
         // Only update fields if they exist in the dto
@@ -49,23 +69,23 @@ export class VehicleRegistrationService {
             throw new NotFoundException(`Vehicle with ID ${id} not found`);
     }
 
-     async softDelete(id: number): Promise<string> {
-    const vehicle = await this.vehicleRepo.findOneBy({ id });
-    if (!vehicle) {
-      throw new NotFoundException('Vehicle not found');
+    async softDelete(id: number): Promise<string> {
+        const vehicle = await this.vehicleRepo.findOneBy({ id });
+        if (!vehicle) {
+            throw new NotFoundException('Vehicle not found');
+        }
+
+        vehicle.status = 0; // Mark as inactive
+        vehicle.updated_at = new Date().toISOString().split('T')[0];
+
+        await this.vehicleRepo.save(vehicle);
+
+        return `Vehicle with ID ${id} marked as inactive`;
     }
 
-    vehicle.status = 0; // Mark as inactive
-    vehicle.updated_at = new Date().toISOString().split('T')[0];
-
-    await this.vehicleRepo.save(vehicle);
-
-    return `Vehicle with ID ${id} marked as inactive`;
-  }
-
-  // Get only active vehicles
-  async findActive(): Promise<VehicleRegistration[]> {
-    return this.vehicleRepo.find({ where: { status: 0 } });
-  }
+    // Get only active vehicles
+    async findActive(): Promise<VehicleRegistration[]> {
+        return this.vehicleRepo.find({ where: { status: 0 } });
+    }
 
 }

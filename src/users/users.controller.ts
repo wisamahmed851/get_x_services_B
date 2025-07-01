@@ -72,9 +72,9 @@ export class UsersController {
   }
 
   // crud of user details
-  @Post("detailsCreate")
-  userDetailsStore(
-    @Body() data: UserDetailsDto,
-    @Req() req: Request,
-  )
+  // @Post("detailsCreate")
+  // userDetailsStore(
+  //   @Body() data: UserDetailsDto,
+  //   @Req() req: Request,
+  // )
 }

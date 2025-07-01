@@ -16,8 +16,11 @@ export class CreateVehicleRegistrationDto {
     @IsNotEmpty()
     company: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     image: string;
+
+    @IsNotEmpty()
+    userId: number;
 }
 
 export class UpdateVehicleRegistrationDto {
