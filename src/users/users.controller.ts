@@ -30,10 +30,7 @@ export class UsersController {
     @Body() user: CreateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const image = file ? file.filename : null;
-    if (!image) {
-      throw new Error('Image file is required');
-    }
+    const image = file?.filename;
     return this.userService.storeUser({ ...user, image });
   }
 

@@ -7,6 +7,7 @@ import { throwError } from 'rxjs';
 import * as bcrypt from 'bcrypt';
 import { UserDetails } from './entity/user_details.entity';
 import { UserDetailsDto } from './dtos/user_details.dto';
+import { use } from 'passport';
 
 @Injectable()
 export class UsersService {
@@ -28,6 +29,9 @@ export class UsersService {
     if (user.password) {
       const saltRounds = 10;
       user.password = await bcrypt.hash(user.password, saltRounds);
+    }
+    if(user.role_id == null){
+      user.role_id == 1;
     }
     const newUser = this.userRepository.create(user);
     return await this.userRepository.save(newUser);
