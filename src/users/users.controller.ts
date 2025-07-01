@@ -2,8 +2,11 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
+  Req,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -11,6 +14,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
+import { UserDetailsDto } from './dtos/user_details.dto';
 
 @Controller('users')
 export class UsersController {
@@ -35,7 +39,13 @@ export class UsersController {
   }
 
   @Get('findOne/:id')
-  findOne(@Body('id') id: number) {
+  findOne(
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: number,
+  ) {
     return this.userService.findOne(id);
   }
 
@@ -55,4 +65,16 @@ export class UsersController {
     const image = file?.filename;
     return this.userService.updateUser(id, { ...user, image });
   }
+
+  @Get('toogleStatus/:id')
+  statusChange(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.statusUpdate(id);
+  }
+
+  // crud of user details
+  @Post("detailsCreate")
+  userDetailsStore(
+    @Body() data: UserDetailsDto,
+    @Req() req: Request,
+  )
 }

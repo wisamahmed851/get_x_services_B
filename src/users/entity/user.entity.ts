@@ -1,4 +1,11 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { UserDetails } from './user_details.entity';
 
 @Entity()
 export class User {
@@ -58,4 +65,6 @@ export class User {
     this.created_at = onlyDate;
     this.updated_at = onlyDate;
   }
+  @OneToOne(() => UserDetails, (userDetails) => userDetails.user)
+  details: UserDetails;
 }

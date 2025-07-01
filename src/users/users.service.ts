@@ -5,14 +5,19 @@ import { Not, Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
 import { throwError } from 'rxjs';
 import * as bcrypt from 'bcrypt';
+import { UserDetails } from './entity/user_details.entity';
+import { UserDetailsDto } from './dtos/user_details.dto';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(UserDetails)
+    private userDetailsRepository: Repository<UserDetails>,
   ) {}
 
+  // user crud
   async storeUser(user: CreateUserDto) {
     const existing = await this.userRepository.findOne({
       where: { email: user.email },
@@ -75,5 +80,35 @@ export class UsersService {
     }
     Object.assign(existing, user);
     return await this.userRepository.save(existing);
+  }
+  async statusUpdate(id: number) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new BadRequestException('The user is not found');
+    }
+
+    user.status = user.status === 0 ? 1 : 0;
+
+    const updatedUser = await this.userRepository.save(user);
+
+    const userMessage =
+      updatedUser.status === 1
+        ? 'User Has Been Activated Successfully'
+        : 'User Has Beeen Deactivated Successfully';
+
+    return {
+      message: userMessage,
+      user: updatedUser,
+    };
+  }
+
+  // user details crud
+
+  async create_user_details(
+    userDetails: UserDetailsDto,
+    user: User,
+  ){
+
   }
 }
