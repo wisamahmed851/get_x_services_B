@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VehicleRegistration } from './entity/vehicle-registration.entity';
 import { Repository } from 'typeorm';
-import { CreateVehicleRegistrationDto, UpdateVehicleRegistrationDto } from './entity/dtos/vehicle-registration.dto';
+import { CreateVehicleRegistrationDto, UpdateVehicleRegistrationDto } from './dtos/vehicle-registration.dto';
 
 @Injectable()
 export class VehicleRegistrationService {
@@ -48,4 +48,24 @@ export class VehicleRegistrationService {
         if (result.affected === 0)
             throw new NotFoundException(`Vehicle with ID ${id} not found`);
     }
+
+     async softDelete(id: number): Promise<string> {
+    const vehicle = await this.vehicleRepo.findOneBy({ id });
+    if (!vehicle) {
+      throw new NotFoundException('Vehicle not found');
+    }
+
+    vehicle.status = 0; // Mark as inactive
+    vehicle.updated_at = new Date().toISOString().split('T')[0];
+
+    await this.vehicleRepo.save(vehicle);
+
+    return `Vehicle with ID ${id} marked as inactive`;
+  }
+
+  // Get only active vehicles
+  async findActive(): Promise<VehicleRegistration[]> {
+    return this.vehicleRepo.find({ where: { status: 0 } });
+  }
+
 }

@@ -29,7 +29,7 @@ export class VehicleRegistration {
         nullable: false,
         comment:' 0 = inactive, 1 = active',
     })
-    status: string;
+    status: number;
 
     @Column({ type: 'date' })
     created_at: String;

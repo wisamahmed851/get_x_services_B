@@ -8,11 +8,12 @@ import {
     Delete,
     UseInterceptors,
     UploadedFile,
+    ParseIntPipe,
 } from '@nestjs/common';
 import { VehicleRegistrationService } from './vehicle-registration.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
-import { CreateVehicleRegistrationDto, UpdateVehicleRegistrationDto } from './entity/dtos/vehicle-registration.dto';
+import { CreateVehicleRegistrationDto, UpdateVehicleRegistrationDto } from './dtos/vehicle-registration.dto';
 
 @Controller('vehicle-registrations')
 export class VehicleRegistrationController {
@@ -36,8 +37,14 @@ export class VehicleRegistrationController {
         return this.vehicleService.findAll();
     }
 
+    // Get all active vehicles
+    @Get('active')
+    findActive() {
+        return this.vehicleService.findActive();
+    }
+
     @Get(':id')
-    findOne(@Param('id') id: number) {
+    findOne(@Param('id', ParseIntPipe) id: number) {
         return this.vehicleService.findOne(id);
     }
 
@@ -53,8 +60,11 @@ export class VehicleRegistrationController {
         return this.vehicleService.update(id, { ...dto, image });
     }
 
-    @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.vehicleService.remove(id);
+    // Soft delete
+    @Delete('soft-delete/:id')
+    softDelete(@Param('id', ParseIntPipe) id: number) {
+        return this.vehicleService.softDelete(id);
     }
+
+
 }
