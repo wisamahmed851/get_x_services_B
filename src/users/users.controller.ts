@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -15,6 +16,9 @@ import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
 import { UserDetailsDto } from './dtos/user_details.dto';
+import { User } from './entity/user.entity';
+import { Request } from 'express';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('users')
 export class UsersController {
@@ -72,9 +76,9 @@ export class UsersController {
   }
 
   // crud of user details
-  // @Post("detailsCreate")
-  // userDetailsStore(
-  //   @Body() data: UserDetailsDto,
-  //   @Req() req: Request,
-  // )
+  @Post('detailsCreate')
+  @UseGuards(JwtAuthGuard)
+  userDetailsStore(@Body() data: UserDetailsDto, @Req() req: Request) {
+    return this.userService.create_user_details(data, req.user as User);
+  }
 }

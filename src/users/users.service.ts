@@ -34,12 +34,15 @@ export class UsersService {
   }
 
   async idnex() {
-    return await this.userRepository.find();
+    return await this.userRepository.find({
+      relations: ['details'],
+    });
   }
 
   async findOne(id: number) {
     const user = await this.userRepository.findOne({
       where: { id },
+      relations: ['details'],
     });
     if (!user) {
       throw new BadRequestException('User Not Found');
@@ -49,6 +52,7 @@ export class UsersService {
   async findOnByEmail(email: string) {
     const user = await this.userRepository.findOne({
       where: { email: email },
+      relations: ['details'],
     });
     if (!user) {
       throw new BadRequestException('User Not Found');
@@ -105,10 +109,26 @@ export class UsersService {
 
   // user details crud
 
-  async create_user_details(
-    userDetails: UserDetailsDto,
-    user: User,
-  ){
+  async create_user_details(userDetails: UserDetailsDto, user: User) {
+    const existingDetails = await this.userDetailsRepository.findOne({
+      where: { user: { id: user.id } },
+    });
 
+    if (existingDetails) {
+      throw new BadRequestException('User details already exist');
+    }
+    const user_Details = await this.userDetailsRepository.create({
+      license_no: userDetails.license_no,
+      license_validity_date: userDetails.license_validity_date,
+      identity_no: userDetails.identity_no,
+      identity_validity_date: userDetails.identity_validity_date,
+      user,
+    });
+
+    const savedUserDetils = await this.userDetailsRepository.save(user_Details);
+    return {
+      message: 'User details have been added successfully',
+      userDetails: savedUserDetils,
+    };
   }
 }
