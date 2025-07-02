@@ -71,10 +71,5 @@ export class User {
   @OneToOne(() => UserDetails, (userDetails) => userDetails.user)
   details: UserDetails;
 
-  @Column()
-  role_id: number;
-
-  @ManyToOne(() => Role)
-  @JoinColumn({ name: 'role_id' })
-  role: Role;
+  
 }

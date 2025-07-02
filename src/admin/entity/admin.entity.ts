@@ -25,13 +25,6 @@ export class Admin {
   @Column({ nullable: true })
   image: string;
 
-  @Column() 
-  role_id: number;
-
-  @ManyToOne(() => Role)
-  @JoinColumn({ name: 'role_id' })
-  role: Role;
-
   @Column({
     type: 'smallint',
     default: 1,
@@ -52,4 +45,6 @@ export class Admin {
     this.created_at = onlyDate;
     this.updated_at = onlyDate;
   }
+  @Column({ nullable: true })
+  access_token: string;
 }

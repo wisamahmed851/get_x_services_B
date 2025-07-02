@@ -67,11 +67,6 @@ export class AdminsService {
     if (admin.email == dto.email) {
       throw new BadRequestException('User With This Email Already Exists');
     }
-    if (dto.role_id) {
-      const role = await this.roleRepo.findOne({ where: { id: dto.role_id } });
-      if (!role) throw new NotFoundException('Role not found');
-      admin.role = role;
-    }
     if (dto.password) {
       const saltRounds = 10;
       dto.password = await bcrypt.hash(dto.password, saltRounds);

@@ -30,7 +30,6 @@ export class UsersService {
       const saltRounds = 10;
       user.password = await bcrypt.hash(user.password, saltRounds);
     }
-    if (user.role_id == null) user.role_id = 1;
 
     const newUser = this.userRepository.create(user);
     return await this.userRepository.save(newUser);
@@ -85,7 +84,6 @@ export class UsersService {
     if (!user.image) {
       user.image = existing.image;
     }
-    if (user.role_id == null) user.role_id = 1;
     Object.assign(existing, user);
     return await this.userRepository.save(existing);
   }

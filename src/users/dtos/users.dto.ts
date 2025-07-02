@@ -24,9 +24,6 @@ export class CreateUserDto {
 
   @IsOptional()
   image: string;
-
-  @IsOptional()
-  role_id: number;
 }
 
 export class UpdateUserDto {
@@ -57,6 +54,5 @@ export class UpdateUserDto {
   @Type(() => Number)
   id?: number;
 
-  @IsOptional()
-  role_id: number;
+  
 }
