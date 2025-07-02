@@ -25,12 +25,19 @@ export class Admin {
   @Column({ nullable: true })
   image: string;
 
+  @Column() 
+  role_id: number;
+
   @ManyToOne(() => Role)
-  @JoinColumn({ name: 'role_id', })
+  @JoinColumn({ name: 'role_id' })
   role: Role;
 
-  @Column({type: 'smallint', default: 1, comment: "1= active and 0 = inactive"})
-  status: number
+  @Column({
+    type: 'smallint',
+    default: 1,
+    comment: '1= active and 0 = inactive',
+  })
+  status: number;
 
   @Column({ type: 'date' })
   created_at: String;

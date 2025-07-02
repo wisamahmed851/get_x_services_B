@@ -22,7 +22,8 @@ export class AdminsService {
     private roleRepo: Repository<Role>,
   ) {}
 
-  async create(dto: CreateAdminDto) {
+  async create(dto: CreateAdminDto, image: string) {
+    if (dto.role_id == null) dto.role_id = 3;
     const role = await this.roleRepo.findOne({ where: { id: dto.role_id } });
     if (!role) throw new NotFoundException('Role not found');
 
@@ -36,12 +37,10 @@ export class AdminsService {
       const saltRounds = 10;
       dto.password = await bcrypt.hash(dto.password, saltRounds);
     }
-    if (dto.role_id == null) {
-      dto.role_id == 1;
-    }
+    if (dto.image == null) dto.image = image;
 
-    const admin = this.adminRepo.create({ ...dto, role });
-    const savedAdmin = this.adminRepo.save(admin);
+    const admin = this.adminRepo.create(dto);
+    const savedAdmin = await this.adminRepo.save(admin);
     return {
       message: 'Admin has Been Created',
       amdin: savedAdmin,

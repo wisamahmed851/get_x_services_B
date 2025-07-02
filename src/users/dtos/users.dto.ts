@@ -2,60 +2,61 @@ import { Type } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 import { IsNull } from 'typeorm';
 
-export class CreateUserDto{
+export class CreateUserDto {
+  @IsNotEmpty()
+  name: string;
 
-    @IsNotEmpty()
-    name: string;
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
 
-    @IsNotEmpty()
-    @IsEmail()
-    
-    email: string;
+  @IsNotEmpty()
+  password: string;
 
-    @IsNotEmpty()
-    password: string;
+  @IsNotEmpty()
+  phone: string;
 
-    @IsNotEmpty()
-    phone: string;
+  @IsNotEmpty()
+  address: string;
 
-    @IsNotEmpty()
-    address: string;
+  @IsNotEmpty()
+  city: string;
 
-    @IsNotEmpty()
-    city: string;
+  @IsOptional()
+  image: string;
 
-    @IsOptional()
-    image: string;
-
-    @IsOptional()
-    role_id: number;
+  @IsOptional()
+  role_id: number;
 }
 
-export class UpdateUserDto{
-    @IsOptional()
-    @IsNotEmpty()
-    name?: string;
+export class UpdateUserDto {
+  @IsOptional()
+  @IsNotEmpty()
+  name?: string;
 
-    @IsOptional()
-    @IsEmail()
-    email?: string;
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 
-    @IsOptional()
-    password?: string;
+  @IsOptional()
+  password?: string;
 
-    @IsOptional()
-    phone?: string;
+  @IsOptional()
+  phone?: string;
 
-    @IsOptional()
-    address?: string;
+  @IsOptional()
+  address?: string;
 
-    @IsOptional()
-    city?: string;
+  @IsOptional()
+  city?: string;
 
-    @IsOptional()
-    image?: string;
+  @IsOptional()
+  image?: string;
 
-    @IsOptional()
-    @Type(() => Number)
-    id?: number;
+  @IsOptional()
+  @Type(() => Number)
+  id?: number;
+
+  @IsOptional()
+  role_id: number;
 }
