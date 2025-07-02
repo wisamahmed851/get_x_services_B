@@ -69,7 +69,7 @@ export class VehicleRegistrationService {
             throw new NotFoundException(`Vehicle with ID ${id} not found`);
     }
 
-    async softDelete(id: number): Promise<string> {
+    async softDelete(id: number): Promise<{ messege: string; vehicle: VehicleRegistration }> {
         const vehicle = await this.vehicleRepo.findOneBy({ id });
         if (!vehicle) {
             throw new NotFoundException('Vehicle not found');
@@ -78,9 +78,12 @@ export class VehicleRegistrationService {
         vehicle.status = 0; // Mark as inactive
         vehicle.updated_at = new Date().toISOString().split('T')[0];
 
-        await this.vehicleRepo.save(vehicle);
+        const xyz = await this.vehicleRepo.save(vehicle);
 
-        return `Vehicle with ID ${id} marked as inactive`;
+        return {
+            messege: 'vehicle has been inactive',
+            vehicle: xyz,
+        };
     }
 
     // Get only active vehicles
