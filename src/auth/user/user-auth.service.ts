@@ -3,12 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { LoginDto } from './dtos/Auth.dto';
 import { access } from 'fs';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class AuthService {
+export class UserAuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,

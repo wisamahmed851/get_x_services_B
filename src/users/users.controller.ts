@@ -18,7 +18,8 @@ import { multerConfig } from 'src/common/utils/multer.config';
 import { UserDetailsDto } from './dtos/user_details.dto';
 import { User } from './entity/user.entity';
 import { Request } from 'express';
-import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { UserJwtAuthGuard } from 'src/auth/user/user-jwt.guard';
+import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 
 @Controller('users')
 export class UsersController {
@@ -74,8 +75,23 @@ export class UsersController {
 
   // crud of user details
   @Post('detailsCreate')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(UserJwtAuthGuard)
   userDetailsStore(@Body() data: UserDetailsDto, @Req() req: Request) {
     return this.userService.create_user_details(data, req.user as User);
+  }
+
+  @Get('Hello/bybby/admin')
+  @UseGuards(AdminJwtAuthGuard)
+  admin() {
+    return {
+      message: 'Admin Authentication is working perfectly',
+    };
+  }
+  @Get('Hello/bybby/user')
+  @UseGuards(UserJwtAuthGuard)
+  user() {
+    return {
+      message: 'User Authentication is working perfectly',
+    };
   }
 }
