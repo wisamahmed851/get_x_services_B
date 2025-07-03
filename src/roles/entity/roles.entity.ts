@@ -7,4 +7,7 @@ export class Role {
 
   @Column({ unique: true })
   name: string;
+
+  @Column({ type: 'varchar', default: 'user' }) // 'admin' or 'user'
+  guard: string;
 }

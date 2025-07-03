@@ -12,16 +12,29 @@ export class RolesSeederService {
   ) {}
 
   async seed() {
-    const defaultRoles = ['user', 'provider', 'admin'];
+    const defaultRoles = [
+      { name: 'admin', guard: 'admin' },
+      { name: 'manager', guard: 'admin' },
+      { name: 'user', guard: 'user' },
+      { name: 'driver', guard: 'user' },
+    ];
 
-    for (const name of defaultRoles) {
-      const exists = await this.roleRepository.findOne({ where: { name } });
+    for (const roleData of defaultRoles) {
+      const exists = await this.roleRepository.findOne({
+        where: { name: roleData.name },
+      });
       if (!exists) {
-        const role = this.roleRepository.create({ name });
+        const role = this.roleRepository.create(roleData);
         await this.roleRepository.save(role);
-        Logger.log(`✅ Seeded role: ${name}`, 'RolesSeederService');
+        Logger.log(
+          `✅ Seeded role: ${JSON.stringify(roleData)}`,
+          'RolesSeederService',
+        );
       } else {
-        Logger.log(`ℹ️ Role already exists: ${name}`, 'RolesSeederService');
+        Logger.log(
+          `ℹ️ Role already exists: ${JSON.stringify(roleData)}`,
+          'RolesSeederService',
+        );
       }
     }
   }

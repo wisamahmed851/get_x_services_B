@@ -41,8 +41,8 @@ import { AdminAuthModule } from './auth/admin/admin-auth.module';
     AdminsModule,
     AdminAuthModule,
   ],
-  controllers: [AppController, RolesController],
-  providers: [AppService, RolesService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements OnApplicationBootstrap {
   constructor(private readonly rolesSeederService: RolesSeederService) {}
