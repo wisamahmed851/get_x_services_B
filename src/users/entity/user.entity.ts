@@ -71,5 +71,6 @@ export class User {
   @OneToOne(() => UserDetails, (userDetails) => userDetails.user)
   details: UserDetails;
 
-  
+  @Column({ nullable: true })
+  access_token: string;
 }

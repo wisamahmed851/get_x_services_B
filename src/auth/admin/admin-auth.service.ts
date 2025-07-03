@@ -46,6 +46,9 @@ export class AdminAuthService {
   async getProfile(admin: any) {
     const loginAdmin = await this.adminRepo.findOne({
       where: { id: admin.id },
+      select: {
+        access_token: false,
+      },
     });
     if (!loginAdmin) throw new BadRequestException('user Not Found');
 

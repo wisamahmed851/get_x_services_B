@@ -1,10 +1,15 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { access } from 'fs';
 import { JwtService } from '@nestjs/jwt';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class UserAuthService {
@@ -27,14 +32,63 @@ export class UserAuthService {
     return user;
   }
 
-  login(user: { id: number; email: string; name: string }) {
+  async login(user: User) {
     const paylod = { sub: user.id, email: user.email };
+    const token = this.jwtService.sign(paylod);
+    user.access_token = token;
+    await this.userRepository.save(user);
     return {
-      access_token: this.jwtService.sign(paylod),
+      access_token: token,
       user: {
         name: user.name,
         email: user.email,
       },
+    };
+  }
+
+  async profile(user: any) {
+    const loginUser = await this.userRepository.findOne({
+      where: { id: user.id },
+    });
+    if (!loginUser) throw new NotFoundException('User Not Found');
+
+    return loginUser;
+  }
+
+  async changePassword(
+    body: { oldPassword: string; newPassword: string },
+    user: any,
+  ) {
+    const loginUser = await this.userRepository.findOne({
+      where: { id: user.id },
+    });
+
+    if (!loginUser) throw new NotFoundException('User Not FOund');
+
+    const matched = await bcrypt.compare(body.oldPassword, loginUser.password);
+    if (!matched) throw new BadRequestException('Old Password is invalid');
+
+    if (!body.newPassword || body.newPassword.trim().length < 6) {
+      throw new BadRequestException('Password must be at least 6 characters');
+    }
+
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(body.newPassword, saltRounds);
+    loginUser.password = hashedPassword;
+
+    await this.userRepository.save(loginUser);
+
+    return {
+      message: 'Password has been successfully updated',
+    };
+  }
+
+  async logout(user: User) {
+    user.access_token = '';
+    await this.userRepository.save(user);
+
+    return {
+      message: 'User has been logout',
     };
   }
 }
