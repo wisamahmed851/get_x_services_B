@@ -17,6 +17,8 @@ import { PermissionsModule } from './permissions/permissions.module';
 import { RolePermissionModule } from './role-permissions/role-permissions.module';
 import { AdminRoleModule } from './assig-roles-admin/admin-roles.module';
 import { UserRoleModule } from './assig-roles-user/user-roles.module';
+import { UserPermissionModule } from './assign-permission-user/user-permission.module';
+import { AdminPermissionModule } from './assign-permission-admin/admin-permission.module';
 
 @Module({
   imports: [
@@ -48,6 +50,8 @@ import { UserRoleModule } from './assig-roles-user/user-roles.module';
     RolePermissionModule,
     AdminRoleModule,
     UserRoleModule,
+    UserPermissionModule,
+    AdminPermissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
