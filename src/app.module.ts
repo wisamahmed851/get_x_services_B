@@ -13,6 +13,7 @@ import { RolesSeederModule } from './roles/seeder/roles-seeder.module';
 import { RolesSeederService } from './roles/seeder/roles-seeder.service';
 import { AdminsModule } from './admin/admin.module';
 import { AdminAuthModule } from './auth/admin/admin-auth.module';
+import { PermissionsModule } from './permissions/permissions.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { AdminAuthModule } from './auth/admin/admin-auth.module';
     RolesSeederModule,
     AdminsModule,
     AdminAuthModule,
+    PermissionsModule
   ],
   controllers: [AppController],
   providers: [AppService],
