@@ -15,8 +15,8 @@ import { AdminsModule } from './admin/admin.module';
 import { AdminAuthModule } from './auth/admin/admin-auth.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolePermissionModule } from './role-permissions/role-permissions.module';
-import { AdminRoleModule } from './assig-permission-admin/admin-roles.module';
-import { UserRoleModule } from './assig-permission-user/user-roles.module';
+import { AdminRoleModule } from './assig-roles-admin/admin-roles.module';
+import { UserRoleModule } from './assig-roles-user/user-roles.module';
 
 @Module({
   imports: [
