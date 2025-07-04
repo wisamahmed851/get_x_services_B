@@ -14,6 +14,8 @@ import { RolesSeederService } from './roles/seeder/roles-seeder.service';
 import { AdminsModule } from './admin/admin.module';
 import { AdminAuthModule } from './auth/admin/admin-auth.module';
 import { PermissionsModule } from './permissions/permissions.module';
+import { RolePermissionModule } from './role-permissions/role-permissions.module';
+import { AdminRoleModule } from './assig-permission-admin/admin-roles.module';
 
 @Module({
   imports: [
@@ -41,7 +43,9 @@ import { PermissionsModule } from './permissions/permissions.module';
     RolesSeederModule,
     AdminsModule,
     AdminAuthModule,
-    PermissionsModule
+    PermissionsModule,
+    RolePermissionModule,
+    AdminRoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

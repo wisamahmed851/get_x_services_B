@@ -1,7 +1,6 @@
 import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreatePermissionDto {
-
   @IsNotEmpty()
   module: string;
 
@@ -12,12 +11,18 @@ export class CreatePermissionDto {
   name: string;
 
   @IsNotEmpty()
-  guard: string; 
+  guard: string;
 }
 export class UpdatePermissionDto {
+  @IsOptional()
+  module: string;
+
+  @IsOptional()
+  action: string;
+
   @IsOptional()
   name: string;
 
   @IsOptional()
-  guard: string; // 'user' or 'admin'
+  guard: string;
 }
