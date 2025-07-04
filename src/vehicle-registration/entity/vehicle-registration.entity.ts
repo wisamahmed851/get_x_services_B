@@ -44,4 +44,8 @@ export class VehicleRegistration {
         this.created_at = onlyDate;
         this.updated_at = onlyDate;
     }
+
+    @Column({nullable: true})
+    seats_count: number;
+
 }
