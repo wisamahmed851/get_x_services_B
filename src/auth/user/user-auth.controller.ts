@@ -9,7 +9,10 @@ export class UserAuthController {
 
   @Post('login')
   async login(@Body() body: UserLoginDto) {
-    const user = await this.userAuthService.validateUser(body.email, body.password);
+    const user = await this.userAuthService.validateUser(
+      body.email,
+      body.password,
+    );
     return this.userAuthService.login(user);
   }
 

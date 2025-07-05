@@ -9,11 +9,16 @@ import {
   Post,
 } from '@nestjs/common';
 import { UserPermissionsService } from './user-permissions.service';
-import { CreateUserPermissionDto, UpdateUserPermissionDto } from './dtos/user-permission.dto';
+import {
+  CreateUserPermissionDto,
+  UpdateUserPermissionDto,
+} from './dtos/user-permission.dto';
 
 @Controller('user-permissions')
 export class UserPermissionsController {
-  constructor(private readonly userPermissionsService: UserPermissionsService) {}
+  constructor(
+    private readonly userPermissionsService: UserPermissionsService,
+  ) {}
 
   @Post('store')
   create(@Body() dto: CreateUserPermissionDto) {
@@ -31,10 +36,7 @@ export class UserPermissionsController {
   }
 
   @Patch('update/:id')
-  update(
-    @Param('id') id: number,
-    @Body() dto: UpdateUserPermissionDto,
-  ) {
+  update(@Param('id') id: number, @Body() dto: UpdateUserPermissionDto) {
     return this.userPermissionsService.update(id, dto);
   }
 

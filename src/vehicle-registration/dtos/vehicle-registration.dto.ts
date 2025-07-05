@@ -1,51 +1,50 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateVehicleRegistrationDto {
-    @IsNotEmpty()
-    vehicleName: string;
+  @IsNotEmpty()
+  vehicleName: string;
 
-    @IsNotEmpty()
-    vehiclemodel: string;
+  @IsNotEmpty()
+  vehiclemodel: string;
 
-    @IsNotEmpty()
-    registrationNumber: string;
+  @IsNotEmpty()
+  registrationNumber: string;
 
-    @IsNotEmpty()
-    color: string;
+  @IsNotEmpty()
+  color: string;
 
-    @IsNotEmpty()
-    company: string;
+  @IsNotEmpty()
+  company: string;
 
-    @IsOptional()
-    image: string;
+  @IsOptional()
+  image: string;
 
-    @IsNotEmpty()
-    userId: number;
-    
-    @IsNotEmpty()
-    seats_count: number;
+  @IsNotEmpty()
+  userId: number;
+
+  @IsNotEmpty()
+  seats_count: number;
 }
 
 export class UpdateVehicleRegistrationDto {
-    @IsOptional()
-    vehicleName: string;
+  @IsOptional()
+  vehicleName: string;
 
-    @IsOptional()
-    vehiclemodel: string;
+  @IsOptional()
+  vehiclemodel: string;
 
-    @IsOptional()
-    registrationNumber: string;
+  @IsOptional()
+  registrationNumber: string;
 
-    @IsOptional()
-    color: string;
+  @IsOptional()
+  color: string;
 
-    @IsOptional()
-    company: string;
+  @IsOptional()
+  company: string;
 
-    @IsOptional()
-    image: string;
+  @IsOptional()
+  image: string;
 
-    @IsOptional()
-    seats_count: number;
+  @IsOptional()
+  seats_count: number;
 }
-

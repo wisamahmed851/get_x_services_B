@@ -1,17 +1,17 @@
-import { IsNotEmpty, IsOptional } from "class-validator";
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
-export class CreateRoleDto{
-    @IsNotEmpty()
-    name: string;
+export class CreateRoleDto {
+  @IsNotEmpty()
+  name: string;
 
-    @IsNotEmpty()
-    guard: string;
+  @IsNotEmpty()
+  guard: string;
 }
 
-export class UpdateRoleDto{
-    @IsOptional()
-    name: string;
+export class UpdateRoleDto {
+  @IsOptional()
+  name: string;
 
-    @IsOptional()
-    guard: string;
+  @IsOptional()
+  guard: string;
 }

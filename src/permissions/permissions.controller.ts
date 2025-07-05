@@ -1,7 +1,18 @@
 // src/permissions/permissions.controller.ts
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
-import { CreatePermissionDto, UpdatePermissionDto } from './dtos/permission.dto';
+import {
+  CreatePermissionDto,
+  UpdatePermissionDto,
+} from './dtos/permission.dto';
 
 @Controller('permissions')
 export class PermissionsController {
@@ -23,7 +34,10 @@ export class PermissionsController {
   }
 
   @Patch('update/:id')
-  update(@Param('id') id: string, @Body() updatePermissionDto: UpdatePermissionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePermissionDto: UpdatePermissionDto,
+  ) {
     return this.permissionsService.update(+id, updatePermissionDto);
   }
 

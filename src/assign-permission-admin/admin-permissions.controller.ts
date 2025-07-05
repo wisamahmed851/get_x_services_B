@@ -16,7 +16,9 @@ import {
 
 @Controller('admin-permissions')
 export class AdminPermissionsController {
-  constructor(private readonly adminPermissionsService: AdminPermissionsService) {}
+  constructor(
+    private readonly adminPermissionsService: AdminPermissionsService,
+  ) {}
 
   @Post('store')
   create(@Body() dto: CreateAdminPermissionDto) {

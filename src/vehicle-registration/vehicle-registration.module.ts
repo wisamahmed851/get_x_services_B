@@ -7,9 +7,9 @@ import { User } from 'src/users/entity/user.entity';
 import { UserVehicle } from './entity/user-vehicle.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([VehicleRegistration,User, UserVehicle])],
-    controllers: [VehicleRegistrationController],
-    providers: [VehicleRegistrationService],
-    exports: [VehicleRegistrationService]
+  imports: [TypeOrmModule.forFeature([VehicleRegistration, User, UserVehicle])],
+  controllers: [VehicleRegistrationController],
+  providers: [VehicleRegistrationService],
+  exports: [VehicleRegistrationService],
 })
 export class VehicleRegistrationModule {}

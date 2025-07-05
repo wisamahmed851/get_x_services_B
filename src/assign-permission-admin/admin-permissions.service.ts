@@ -78,7 +78,9 @@ export class AdminPermissionsService {
       if (!permission) throw new BadRequestException('Invalid permission_id');
 
       if (permission.guard !== 'admin') {
-        throw new BadRequestException('Permission must be for admin guard only');
+        throw new BadRequestException(
+          'Permission must be for admin guard only',
+        );
       }
 
       existing.permission_id = dto.permission_id;

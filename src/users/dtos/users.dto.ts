@@ -53,6 +53,4 @@ export class UpdateUserDto {
   @IsOptional()
   @Type(() => Number)
   id?: number;
-
-  
 }

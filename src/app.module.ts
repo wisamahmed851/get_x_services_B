@@ -6,8 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { VehicleRegistrationModule } from './vehicle-registration/vehicle-registration.module';
 import { UserAuthModule } from './auth/user/user-auth.module';
-import { RolesController } from './roles/roles.controller';
-import { RolesService } from './roles/roles.service';
 import { RolesModule } from './roles/roles.module';
 import { RolesSeederModule } from './roles/seeder/roles-seeder.module';
 import { RolesSeederService } from './roles/seeder/roles-seeder.service';

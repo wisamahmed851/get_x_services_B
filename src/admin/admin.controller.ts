@@ -27,7 +27,7 @@ export class AdminsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const image = file?.filename;
-    return this.adminsService.create(dto, image );
+    return this.adminsService.create(dto, image);
   }
 
   @Get('index')
@@ -52,7 +52,7 @@ export class AdminsController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const image = file?.filename;
-    return this.adminsService.update(id, {...dto, image});
+    return this.adminsService.update(id, { ...dto, image });
   }
 
   @Delete(':id')

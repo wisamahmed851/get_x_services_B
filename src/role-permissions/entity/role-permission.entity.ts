@@ -1,7 +1,7 @@
 import { Permission } from 'src/permissions/entity/permission.entity';
 import { Role } from 'src/roles/entity/roles.entity';
 import {
-    BeforeInsert,
+  BeforeInsert,
   Column,
   Entity,
   JoinColumn,
