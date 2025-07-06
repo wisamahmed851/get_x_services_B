@@ -22,7 +22,6 @@ import { UserJwtAuthGuard } from 'src/auth/user/user-jwt.guard';
 import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 
 @Controller('users')
-@UseGuards(AdminJwtAuthGuard)
 export class UsersController {
   constructor(private userService: UsersService) {}
 

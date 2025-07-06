@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { UserLoginDto } from './dtos/user-login.dto';
 import { UserAuthService } from './user-auth.service';
 import { UserJwtAuthGuard } from './user-jwt.guard';
@@ -7,6 +15,7 @@ import { UserJwtAuthGuard } from './user-jwt.guard';
 export class UserAuthController {
   constructor(private userAuthService: UserAuthService) {}
 
+  @HttpCode(200)
   @Post('login')
   async login(@Body() body: UserLoginDto) {
     const user = await this.userAuthService.validateUser(
@@ -31,9 +40,10 @@ export class UserAuthController {
     return this.userAuthService.changePassword(body, req);
   }
 
+  @HttpCode(200)
   @Post('logout')
   @UseGuards(UserJwtAuthGuard)
   logout(@Req() req: any) {
-    return this.userAuthService.logout(req.user); // `req.user.id` is available
+    return this.userAuthService.logout(req); // `req.user.id` is available
   }
 }

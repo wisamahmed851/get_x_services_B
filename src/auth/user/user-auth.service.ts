@@ -7,9 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entity/user.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { access } from 'fs';
 import { JwtService } from '@nestjs/jwt';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class UserAuthService {
@@ -38,6 +36,7 @@ export class UserAuthService {
     user.access_token = token;
     await this.userRepository.save(user);
     return {
+      success: true,
       access_token: token,
       user: {
         name: user.name,
@@ -83,7 +82,13 @@ export class UserAuthService {
     };
   }
 
-  async logout(user: User) {
+  async logout(data: User) {
+    const user = await this.userRepository.findOne({
+      where: {id: data.id},
+    });
+    if (!user) {
+      throw new NotFoundException("User Not Found");
+    }
     user.access_token = '';
     await this.userRepository.save(user);
 
