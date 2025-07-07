@@ -37,11 +37,9 @@ export class UserAuthService {
     await this.userRepository.save(user);
     return {
       success: true,
+      message: 'User has been successfully logged in',
       access_token: token,
-      user: {
-        name: user.name,
-        email: user.email,
-      },
+      data: user,
     };
   }
 
