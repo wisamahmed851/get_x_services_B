@@ -9,14 +9,17 @@ import {
   Patch,
   Delete,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { RolePermissionsService } from './role-permissions.service';
 import {
   CreateRolePermissionAssigningDto,
   UpdateRolePermissionAssigningDto,
 } from './dto/role-permission.dto';
+import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 
-@Controller('role-permissions')
+@Controller('admin/role-permissions')
+@UseGuards(AdminJwtAuthGuard)
 export class RolePermissionsController {
   constructor(private readonly service: RolePermissionsService) {}
 
@@ -33,6 +36,10 @@ export class RolePermissionsController {
   @Get('findOne/:id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
+  }
+  @Get('toogleStatus/:id')
+  toogleStatus(@Param('id', ParseIntPipe) id: number) {
+    return this.service.toogleStatus(id);
   }
 
   @Patch('update/:id')

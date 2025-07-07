@@ -5,12 +5,17 @@ export class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({})
   name: string;
 
   @Column({ type: 'varchar', default: 'user' }) // 'admin' or 'user'
   guard: string;
-
+  @Column({
+    type: 'smallint',
+    default: 1,
+    comment: '1= active and 0 = inactive',
+  })
+  status: number;
   @Column({ type: 'date' })
   created_at: String;
 

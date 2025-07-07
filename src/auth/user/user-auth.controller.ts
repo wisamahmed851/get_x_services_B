@@ -37,7 +37,7 @@ export class UserAuthController {
     @Body() body: { oldPassword: string; newPassword: string },
     @Req() req: any,
   ) {
-    return this.userAuthService.changePassword(body, req);
+    return this.userAuthService.changePassword(body, req.user);
   }
 
   @HttpCode(200)

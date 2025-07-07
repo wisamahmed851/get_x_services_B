@@ -34,25 +34,37 @@ export class AdminAuthService {
     const token = this.jwtSerrvice.sign(paylod);
     admin.access_token = token;
     await this.adminRepo.save(admin);
+
+    const { password, access_token, ...safeAdmin } = admin;
+
     return {
+      success: true,
+      message: 'Admin Has Been LogedIn',
       access_token: token,
-      admin: {
-        id: admin.id,
-        email: admin.email,
-      },
+      data: safeAdmin,
     };
   }
 
-  async getProfile(admin: any) {
+  async getProfile(admin: Admin) {
     const loginAdmin = await this.adminRepo.findOne({
       where: { id: admin.id },
       select: {
-        access_token: false,
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        status: true,
+        created_at: true,
+        updated_at: true,
       },
     });
     if (!loginAdmin) throw new BadRequestException('user Not Found');
 
-    return loginAdmin;
+    return {
+      success: true,
+      message: 'Admin Profile Is fetched',
+      data: loginAdmin,
+    };
   }
 
   async passwordChange(
@@ -85,7 +97,9 @@ export class AdminAuthService {
     await this.adminRepo.save(loginAdmin);
 
     return {
+      success: true,
       message: 'Password has been successfully updated',
+      data: {},
     };
   }
 
@@ -94,7 +108,9 @@ export class AdminAuthService {
     await this.adminRepo.save(admin);
 
     return {
+      statud: true,
       message: 'Logged out Successfully',
+      data: {},
     };
   }
 }

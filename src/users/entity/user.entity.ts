@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { UserDetails } from './user_details.entity';
 import { Role } from 'src/roles/entity/roles.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -22,6 +23,7 @@ export class User {
   email: string;
 
   @Column({ nullable: false })
+  @Exclude()
   password: string;
 
   @Column({ nullable: true })

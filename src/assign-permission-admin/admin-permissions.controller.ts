@@ -7,14 +7,17 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { AdminPermissionsService } from './admin-permissions.service';
 import {
   CreateAdminPermissionDto,
   UpdateAdminPermissionDto,
 } from './dtos/admin-permission.dto';
+import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 
-@Controller('admin-permissions')
+@Controller('admin/permission-assigning-admin')
+@UseGuards(AdminJwtAuthGuard)
 export class AdminPermissionsController {
   constructor(
     private readonly adminPermissionsService: AdminPermissionsService,
@@ -33,6 +36,10 @@ export class AdminPermissionsController {
   @Get('findOne/:id')
   findOne(@Param('id') id: number) {
     return this.adminPermissionsService.findOne(id);
+  }
+  @Get('toggleStatus/:id')
+  toggleStatus(@Param('id') id: number) {
+    return this.adminPermissionsService.toggleStatus(id);
   }
 
   @Patch('update/:id')

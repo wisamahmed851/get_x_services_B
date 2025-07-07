@@ -14,7 +14,7 @@ import {
   UpdateUserPermissionDto,
 } from './dtos/user-permission.dto';
 
-@Controller('user-permissions')
+@Controller('admin/permission-assigning-admin')
 export class UserPermissionsController {
   constructor(
     private readonly userPermissionsService: UserPermissionsService,
@@ -33,6 +33,11 @@ export class UserPermissionsController {
   @Get('findOne/:id')
   findOne(@Param('id') id: number) {
     return this.userPermissionsService.findOne(id);
+  }
+
+  @Get('toggleStatus/:id')
+  toggleStatus(@Param('id') id: number) {
+    return this.userPermissionsService.toggleStatus(id);
   }
 
   @Patch('update/:id')

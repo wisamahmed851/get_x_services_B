@@ -11,7 +11,7 @@ export class Permission {
   @Column()
   action: string;
 
-  @Column({ unique: true })
+  @Column()
   name: string;
 
   @Column({ type: 'varchar', default: 'admin' }) // 'user' or 'admin'

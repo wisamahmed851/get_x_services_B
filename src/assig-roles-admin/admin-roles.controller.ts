@@ -4,13 +4,14 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
 } from '@nestjs/common';
 import { AdminRolesService } from './admin-roles.service';
 import { CreateAdminRoleDto, UpdateAdminRoleDto } from './dtos/admin-role.dto';
 
-@Controller('admin-roles')
+@Controller('admin/roles-assigning-admin')
 export class AdminRolesController {
   constructor(private readonly service: AdminRolesService) {}
 
@@ -25,17 +26,24 @@ export class AdminRolesController {
   }
 
   @Get('findOne/:id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.service.findOne(id);
+  }
+  @Get('toogleStatus/:id')
+  toogleStatus(@Param('id', ParseIntPipe) id: number) {
+    return this.service.toogleStatus(id);
   }
 
   @Patch('update/:id')
-  update(@Param('id') id: number, @Body() dto: UpdateAdminRoleDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateAdminRoleDto,
+  ) {
     return this.service.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.service.remove(id);
   }
 }
