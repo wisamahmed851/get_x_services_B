@@ -7,14 +7,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
 import {
   CreatePermissionDto,
   UpdatePermissionDto,
 } from './dtos/permission.dto';
+import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 
-@Controller('permissions')
+@Controller('admin/permissions')
+@UseGuards(AdminJwtAuthGuard)
 export class PermissionsController {
   constructor(private readonly permissionsService: PermissionsService) {}
 
@@ -40,7 +44,10 @@ export class PermissionsController {
   ) {
     return this.permissionsService.update(+id, updatePermissionDto);
   }
-
+  @Get('toogleStatus/:id')
+  async toogleStatus(@Param('id', ParseIntPipe) id: number) {
+    return await this.permissionsService.toogleStatus(id);
+  }
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.permissionsService.remove(+id);

@@ -1,12 +1,13 @@
+// src/admin/admin.service.ts
 import {
-  BadGatewayException,
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Not } from 'typeorm';
 import { Admin } from './entity/admin.entity';
-import { Repository } from 'typeorm';
 import { Role } from 'src/roles/entity/roles.entity';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { UpdateAdminDto } from './dtos/update-admin.dto';
@@ -16,93 +17,149 @@ import * as bcrypt from 'bcrypt';
 export class AdminsService {
   constructor(
     @InjectRepository(Admin)
-    private adminRepo: Repository<Admin>,
-
+    private readonly adminRepo: Repository<Admin>,
     @InjectRepository(Role)
-    private roleRepo: Repository<Role>,
+    private readonly roleRepo: Repository<Role>, // still injected even if unused for now
   ) {}
 
+  /* ─────────────────────────────── CREATE ─────────────────────────────── */
   async create(dto: CreateAdminDto, image: string) {
-    if (dto.role_id == null) dto.role_id = 3;
-    const role = await this.roleRepo.findOne({ where: { id: dto.role_id } });
-    if (!role) throw new NotFoundException('Role not found');
+    try {
+      const existing = await this.adminRepo.findOne({
+        where: { email: dto.email },
+      });
+      if (existing)
+        throw new BadRequestException('User with this email already exists');
 
-    const existing = await this.adminRepo.findOne({
-      where: { email: dto.email },
-    });
-    if (existing) {
-      throw new BadRequestException('User With This Email Already Exists');
+      if (dto.password) {
+        dto.password = await bcrypt.hash(dto.password, 10);
+      }
+      if (!dto.image) dto.image = image;
+
+      const saved = await this.adminRepo.save(this.adminRepo.create(dto));
+      const { password, access_token, ...clean } = saved;
+
+      return {
+        success: true,
+        message: 'Admin has been created',
+        data: clean,
+      };
+    } catch (err) {
+      this.handleUnknown(err);
     }
-    if (dto.password) {
-      const saltRounds = 10;
-      dto.password = await bcrypt.hash(dto.password, saltRounds);
+  }
+
+  /* ─────────────────────────────── FIND ALL ─────────────────────────────── */
+  async findAll() {
+    try {
+      const admins = await this.adminRepo.find();
+      if (!admins.length) throw new NotFoundException('Admin list is empty');
+
+      const data = admins.map(({ password, access_token, ...rest }) => rest);
+      return { success: true, message: 'Admins fetched', data };
+    } catch (err) {
+      this.handleUnknown(err);
     }
-    if (dto.image == null) dto.image = image;
-
-    const admin = this.adminRepo.create(dto);
-    const savedAdmin = await this.adminRepo.save(admin);
-    return {
-      message: 'Admin has Been Created',
-      amdin: savedAdmin,
-    };
   }
 
-  findAll() {
-    return this.adminRepo.find({ relations: ['role'] });
-  }
-  allAvtive() {
-    return this.adminRepo.find({
-      relations: ['role'],
-      where: { status: 1 },
-    });
-  }
-
-  findOne(id: number) {
-    return this.adminRepo.findOne({ where: { id }, relations: ['role'] });
+  /* ─────────────────────────────── ACTIVE ONLY ─────────────────────────────── */
+  async allAvtive() {
+    try {
+      const admins = await this.adminRepo.find({ where: { status: 1 } });
+      const data = admins.map(({ password, access_token, ...rest }) => rest);
+      return { success: true, message: 'Active admins fetched', data };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
   }
 
+  /* ─────────────────────────────── FIND ONE ─────────────────────────────── */
+  async findOne(id: number) {
+    try {
+      const admin = await this.adminRepo.findOne({ where: { id } });
+      if (!admin) throw new NotFoundException('Admin not found');
+
+      const { password, access_token, ...clean } = admin;
+      return { success: true, message: 'Admin fetched', data: clean };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  /* ─────────────────────────────── UPDATE ─────────────────────────────── */
   async update(id: number, dto: UpdateAdminDto) {
-    const admin = await this.findOne(id);
-    if (!admin) throw new NotFoundException('Admin not found');
-    if (admin.email == dto.email) {
-      throw new BadRequestException('User With This Email Already Exists');
+    try {
+      const admin = await this.adminRepo.findOne({ where: { id } });
+      if (!admin) throw new NotFoundException('Admin not found');
+
+      /* ✅ NEW: exclude this record when checking for duplicate email */
+      if (dto.email) {
+        const duplicate = await this.adminRepo.findOne({
+          where: { id: Not(id), email: dto.email },
+        });
+        if (duplicate)
+          throw new BadRequestException(
+            'Email already in use by another admin',
+          );
+      }
+
+      if (dto.password) dto.password = await bcrypt.hash(dto.password, 10);
+      if (!dto.image) dto.image = admin.image;
+
+      Object.assign(admin, dto);
+      const saved = await this.adminRepo.save(admin);
+
+      const { password, access_token, ...clean } = saved;
+      return { success: true, message: 'Admin updated', data: clean };
+    } catch (err) {
+      this.handleUnknown(err);
     }
-    if (dto.password) {
-      const saltRounds = 10;
-      dto.password = await bcrypt.hash(dto.password, saltRounds);
-    }
-    if (!dto.image) {
-      dto.image = admin.image;
-    }
-    Object.assign(admin, dto);
-    return this.adminRepo.save(admin);
   }
 
+  /* ─────────────────────────────── REMOVE ─────────────────────────────── */
   async remove(id: number) {
-    const admin = await this.findOne(id);
-    if (!admin) throw new BadRequestException('Admin Not Found');
-    return this.adminRepo.remove(admin);
+    try {
+      const admin = await this.adminRepo.findOne({ where: { id } });
+      if (!admin) throw new BadRequestException('Admin not found');
+
+      await this.adminRepo.remove(admin); // awaited for consistency
+      return { success: true, message: 'Admin deleted', data: [] };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
   }
 
+  /* ─────────────────────────────── TOGGLE STATUS ─────────────────────────────── */
   async statusUpdate(id: number) {
-    const user = await this.adminRepo.findOne({ where: { id } });
+    try {
+      const admin = await this.adminRepo.findOne({ where: { id } });
+      if (!admin) throw new BadRequestException('Admin not found');
 
-    if (!user) {
-      throw new BadRequestException('The user is not found');
+      admin.status = admin.status === 0 ? 1 : 0;
+      const saved = await this.adminRepo.save(admin);
+
+      const { password, access_token, ...clean } = saved;
+      const msg =
+        saved.status === 1
+          ? 'User has been activated'
+          : 'User has been deactivated';
+
+      return { success: true, message: msg, data: clean };
+    } catch (err) {
+      this.handleUnknown(err);
     }
+  }
 
-    user.status = user.status === 0 ? 1 : 0;
-
-    const updatedUser = await this.adminRepo.save(user);
-
-    const userMessage =
-      updatedUser.status === 1
-        ? 'User Has Been Activated Successfully'
-        : 'User Has Beeen Deactivated Successfully';
-
-    return {
-      message: userMessage,
-      user: updatedUser,
-    };
+  /* ─────────────────────────────── PRIVATE ─────────────────────────────── */
+  private handleUnknown(err: unknown): never {
+    if (
+      err instanceof BadRequestException ||
+      err instanceof NotFoundException
+    ) {
+      throw err;
+    }
+    throw new InternalServerErrorException('Unexpected error', {
+      cause: err as Error,
+    });
   }
 }

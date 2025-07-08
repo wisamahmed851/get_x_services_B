@@ -1,136 +1,190 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+// src/users/users.service.ts
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Not } from 'typeorm';
 import { User } from './entity/user.entity';
-import { Not, Repository } from 'typeorm';
-import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
-import { throwError } from 'rxjs';
-import * as bcrypt from 'bcrypt';
 import { UserDetails } from './entity/user_details.entity';
+import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
 import { UserDetailsDto } from './dtos/user_details.dto';
-import { use } from 'passport';
+import * as bcrypt from 'bcrypt';
+import { Exclude, instanceToPlain } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     @InjectRepository(UserDetails)
-    private userDetailsRepository: Repository<UserDetails>,
+    private readonly userDetailsRepository: Repository<UserDetails>,
   ) {}
 
-  // user crud
-  async storeUser(user: CreateUserDto) {
-    const existing = await this.userRepository.findOne({
-      where: { email: user.email },
-    });
-    if (existing) {
-      throw new BadRequestException('User With This Email Already Exists');
-    }
-    if (user.password) {
-      const saltRounds = 10;
-      user.password = await bcrypt.hash(user.password, saltRounds);
-    }
-
-    const newUser = this.userRepository.create(user);
-    return await this.userRepository.save(newUser);
-  }
-
-  async idnex() {
-    return await this.userRepository.find({
-      relations: ['details'],
-    });
-  }
-
-  async findOne(id: number) {
-    const user = await this.userRepository.findOne({
-      where: { id },
-      relations: ['details'],
-    });
-    if (!user) {
-      throw new BadRequestException('User Not Found');
-    }
-    return user;
-  }
-  async findOnByEmail(email: string) {
-    const user = await this.userRepository.findOne({
-      where: { email: email },
-      relations: ['details'],
-    });
-    if (!user) {
-      throw new BadRequestException('User Not Found');
-    }
-    return user;
-  }
-
-  async updateUser(id: number, user: UpdateUserDto) {
-    const existing = await this.userRepository.findOne({
-      where: { id },
-    });
-    if (!existing) {
-      throw new BadRequestException('User not Found');
-    }
-    if (user.email) {
-      const emailExists = await this.userRepository.findOne({
-        where: { email: user.email, id: Not(id) },
+  /* ─────────────────────────────── CREATE USER ─────────────────────────────── */
+  async storeUser(dto: CreateUserDto) {
+    try {
+      const exists = await this.userRepository.findOne({
+        where: { email: dto.email },
       });
-      if (emailExists) {
-        throw new BadRequestException('Email already exists');
+      if (exists)
+        throw new BadRequestException('User with this email already exists');
+
+      if (dto.password) dto.password = await bcrypt.hash(dto.password, 10);
+
+      const saved = await this.userRepository.save(
+        this.userRepository.create(dto),
+      );
+      const { password, access_token, ...clean } = saved;
+      
+      return {
+        success: true,
+        message: 'User has been created',
+        data: saved,
+      };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  /* ─────────────────────────────── LIST USERS ─────────────────────────────── */
+  async idnex() {
+    // kept the original route name; consider renaming to "index" later
+    try {
+      const users = await this.userRepository.find({ relations: ['details'] });
+      const data = users.map(({ password, access_token, ...rest }) => rest);
+      return { success: true, message: 'User list', data };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  /* ─────────────────────────────── FIND BY ID ─────────────────────────────── */
+  async findOne(id: number) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { id },
+        relations: ['details'],
+      });
+      if (!user) throw new NotFoundException('User not found');
+
+      const { password, access_token, ...clean } = user;
+      return { success: true, message: 'User fetched', data: clean };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  /* ─────────────────────────────── FIND BY EMAIL ─────────────────────────────── */
+  async findOnByEmail(email: string) {
+    try {
+      const user = await this.userRepository.findOne({
+        where: { email },
+        relations: ['details'],
+      });
+      if (!user) throw new NotFoundException('User not found');
+
+      const { password, access_token, ...clean } = user;
+      return { success: true, message: 'User fetched', data: clean };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  /* ─────────────────────────────── UPDATE USER ─────────────────────────────── */
+  async updateUser(id: number, dto: UpdateUserDto) {
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) throw new NotFoundException('User not found');
+
+      /* ✅ NEW: exclude current record when checking email uniqueness */
+      if (dto.email) {
+        const dup = await this.userRepository.findOne({
+          where: { email: dto.email, id: Not(id) },
+        });
+        if (dup) throw new BadRequestException('Email already exists');
       }
+
+      if (dto.password) dto.password = await bcrypt.hash(dto.password, 10);
+      if (!dto.image) dto.image = user.image;
+
+      Object.assign(user, dto);
+      const saved = await this.userRepository.save(user);
+
+      const { password, access_token, ...clean } = saved;
+      return { success: true, message: 'User updated', data: clean };
+    } catch (err) {
+      this.handleUnknown(err);
     }
-    if (user.password) {
-      const saltRounds = 10;
-      user.password = await bcrypt.hash(user.password, saltRounds);
-    }
-    if (!user.image) {
-      user.image = existing.image;
-    }
-    Object.assign(existing, user);
-    return await this.userRepository.save(existing);
   }
+
+  /* ─────────────────────────────── TOGGLE STATUS ─────────────────────────────── */
   async statusUpdate(id: number) {
-    const user = await this.userRepository.findOne({ where: { id } });
+    try {
+      const user = await this.userRepository.findOne({ where: { id } });
+      if (!user) throw new NotFoundException('User not found');
 
-    if (!user) {
-      throw new BadRequestException('The user is not found');
+      user.status = user.status === 0 ? 1 : 0;
+      const saved = await this.userRepository.save(user);
+
+      const { password, access_token, ...clean } = saved;
+      const msg =
+        saved.status === 1
+          ? 'User has been activated successfully'
+          : 'User has been deactivated successfully';
+
+      return { success: true, message: msg, data: clean };
+    } catch (err) {
+      this.handleUnknown(err);
     }
-
-    user.status = user.status === 0 ? 1 : 0;
-
-    const updatedUser = await this.userRepository.save(user);
-
-    const userMessage =
-      updatedUser.status === 1
-        ? 'User Has Been Activated Successfully'
-        : 'User Has Beeen Deactivated Successfully';
-
-    return {
-      message: userMessage,
-      user: updatedUser,
-    };
   }
 
-  // user details crud
+  /* ─────────────────────────────── CREATE USER DETAILS ─────────────────────────────── */
+  async create_user_details(dto: UserDetailsDto, user: User) {
+    try {
+      const exists = await this.userDetailsRepository.findOne({
+        where: { user: { id: user.id } },
+      });
+      if (exists) throw new BadRequestException('User details already exist');
 
-  async create_user_details(userDetails: UserDetailsDto, user: User) {
-    const existingDetails = await this.userDetailsRepository.findOne({
-      where: { user: { id: user.id } },
-    });
+      /* ✅ NEW: optional uniqueness guard on license_no / identity_no */
+      const licDup = await this.userDetailsRepository.findOne({
+        where: { license_no: dto.license_no },
+      });
+      if (licDup)
+        throw new BadRequestException('License number already in use');
 
-    if (existingDetails) {
-      throw new BadRequestException('User details already exist');
+      const details = this.userDetailsRepository.create({
+        license_no: dto.license_no,
+        license_validity_date: dto.license_validity_date,
+        identity_no: dto.identity_no,
+        identity_validity_date: dto.identity_validity_date,
+        user,
+      });
+
+      const saved = await this.userDetailsRepository.save(details);
+      return {
+        success: true,
+        message: 'User details added',
+        data: saved,
+      };
+    } catch (err) {
+      this.handleUnknown(err);
     }
-    const user_Details = await this.userDetailsRepository.create({
-      license_no: userDetails.license_no,
-      license_validity_date: userDetails.license_validity_date,
-      identity_no: userDetails.identity_no,
-      identity_validity_date: userDetails.identity_validity_date,
-      user,
-    });
+  }
 
-    const savedUserDetils = await this.userDetailsRepository.save(user_Details);
-    return {
-      message: 'User details have been added successfully',
-      userDetails: savedUserDetils,
-    };
+  /* ─────────────────────────────── PRIVATE ─────────────────────────────── */
+  private handleUnknown(err: unknown): never {
+    if (
+      err instanceof BadRequestException ||
+      err instanceof NotFoundException
+    ) {
+      throw err; // preserve intended HTTP code
+    }
+    throw new InternalServerErrorException('Unexpected error', {
+      cause: err as Error,
+    });
   }
 }

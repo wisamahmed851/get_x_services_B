@@ -12,7 +12,4 @@ export class UpdateAdminDto {
 
   @IsOptional()
   image: string;
-
-  @IsOptional()
-  role_id: number;
 }

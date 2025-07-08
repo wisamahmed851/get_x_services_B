@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpStatus,
   Param,
   ParseIntPipe,
@@ -21,7 +22,8 @@ import { Request } from 'express';
 import { UserJwtAuthGuard } from 'src/auth/user/user-jwt.guard';
 import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 
-@Controller('users')
+@Controller('admin/users')
+@UseGuards(AdminJwtAuthGuard)
 export class UsersController {
   constructor(private userService: UsersService) {}
 
@@ -57,6 +59,7 @@ export class UsersController {
     return this.userService.findOnByEmail(data.email);
   }
 
+  @HttpCode(200)
   @Post('update/:id')
   @UseInterceptors(FileInterceptor('image', multerConfig('uploads')))
   update(

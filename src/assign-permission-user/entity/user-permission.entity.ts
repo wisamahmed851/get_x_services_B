@@ -3,6 +3,7 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,7 @@ import { User } from 'src/users/entity/user.entity';
 import { Permission } from 'src/permissions/entity/permission.entity';
 
 @Entity({ name: 'user_permissions' })
+@Index(['user_id', 'permission_id'], { unique: true })
 export class UserPermission {
   @PrimaryGeneratedColumn()
   id: number;

@@ -10,40 +10,43 @@ import {
 import { UserLoginDto } from './dtos/user-login.dto';
 import { UserAuthService } from './user-auth.service';
 import { UserJwtAuthGuard } from './user-jwt.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { User } from 'src/users/entity/user.entity';
 
-@Controller('user-auth')
+@Controller('user')
 export class UserAuthController {
-  constructor(private userAuthService: UserAuthService) {}
+  constructor(private readonly userAuthService: UserAuthService) {}
 
-  @HttpCode(200)
   @Post('login')
+  @HttpCode(200)
   async login(@Body() body: UserLoginDto) {
     const user = await this.userAuthService.validateUser(
       body.email,
       body.password,
     );
-    return this.userAuthService.login(user);
+    return await this.userAuthService.login(user);
   }
 
   @Get('profile')
   @UseGuards(UserJwtAuthGuard)
-  profileGet(@Req() req: any) {
-    return this.userAuthService.profile(req);
+  async profile(@CurrentUser() user: User) {
+    return await this.userAuthService.profile(user);
   }
 
   @Post('change-password')
+  @HttpCode(200)
   @UseGuards(UserJwtAuthGuard)
-  changePassword(
+  async changePassword(
     @Body() body: { oldPassword: string; newPassword: string },
-    @Req() req: any,
+    @CurrentUser() user: User,
   ) {
-    return this.userAuthService.changePassword(body, req);
+    return await this.userAuthService.changePassword(body, user);
   }
 
-  @HttpCode(200)
   @Post('logout')
+  @HttpCode(200)
   @UseGuards(UserJwtAuthGuard)
-  logout(@Req() req: any) {
-    return this.userAuthService.logout(req); // `req.user.id` is available
+  async logout(@CurrentUser() user: User) {
+    return await this.userAuthService.logout(user);
   }
 }

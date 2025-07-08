@@ -9,17 +9,22 @@ import {
   ParseIntPipe,
   UseInterceptors,
   UploadedFile,
+  HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { AdminsService } from './admin.service';
 import { CreateAdminDto } from './dtos/create-admin.dto';
 import { UpdateAdminDto } from './dtos/update-admin.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
+import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 
 @Controller('admin')
+@UseGuards(AdminJwtAuthGuard)   
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
+  @HttpCode(200)
   @Post('store')
   @UseInterceptors(FileInterceptor('image', multerConfig('uploads')))
   create(
