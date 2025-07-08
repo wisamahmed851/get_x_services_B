@@ -17,6 +17,7 @@ import { AdminRoleModule } from './assig-roles-admin/admin-roles.module';
 import { UserRoleModule } from './assig-roles-user/user-roles.module';
 import { UserPermissionModule } from './assign-permission-user/user-permission.module';
 import { AdminPermissionModule } from './assign-permission-admin/admin-permission.module';
+import { SavedPlacesModule } from './saved-places/saved-places.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AdminPermissionModule } from './assign-permission-admin/admin-permissio
     UserRoleModule,
     UserPermissionModule,
     AdminPermissionModule,
+    SavedPlacesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
