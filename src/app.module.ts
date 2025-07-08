@@ -19,6 +19,7 @@ import { UserPermissionModule } from './assign-permission-user/user-permission.m
 import { AdminPermissionModule } from './assign-permission-admin/admin-permission.module';
 import { SavedPlacesModule } from './saved-places/saved-places.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { RideFareStandardsModule } from './ride-fare-standards/ride-fare-standards.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
     AdminPermissionModule,
     SavedPlacesModule,
     PaymentMethodsModule,
+    RideFareStandardsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
