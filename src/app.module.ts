@@ -23,6 +23,7 @@ import { RideFareStandardsModule } from './ride-fare-standards/ride-fare-standar
 import { RideBookingModule } from './ride-booking/ride-booking.module';
 import { RideBookingSeederModule } from './ride-booking/seeder/ride-booking-seeder.module';
 import { RideBookingSeederService } from './ride-booking/seeder/ride-booking-seeder.service';
+import { RatingModule } from './Rating/rating.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { RideBookingSeederService } from './ride-booking/seeder/ride-booking-see
     RideFareStandardsModule,
     RideBookingModule,
     RideBookingSeederModule,
+    RatingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
