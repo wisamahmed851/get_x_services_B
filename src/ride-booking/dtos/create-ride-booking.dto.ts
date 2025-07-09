@@ -86,3 +86,14 @@ export class UpdateRideBookingDto {
   @IsString()
   cancellation_reason?: string;
 }
+
+export class CalculateFareDto {
+  @IsNumber()
+  ride_km: number;
+
+  @IsNumber()
+  ride_timing: number;
+
+  @IsNumber()
+  ride_delay_time: number;
+}

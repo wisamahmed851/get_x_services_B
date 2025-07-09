@@ -5,6 +5,7 @@ export enum RideType {
 
 export enum RideStatus {
   BOOKED = 'booked',
+  ACCEPTED = 'ACCEPTED',
   ARRIVED = 'arrived',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',

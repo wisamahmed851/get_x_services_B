@@ -17,17 +17,26 @@ export class UserJwtStrategy extends PassportStrategy(Strategy, 'user-jwt') {
       passReqToCallback: true,
     });
   }
-  async validate(req: Request, payload: { sub: number; email: string }) {
+  async validate(
+    req: Request,
+    payload: { sub: number; email: string; roles: string[] },
+  ) {
     const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
 
     const user = await this.userRepo.findOne({
       where: { id: payload.sub },
     });
+
     if (!user || !user.access_token)
-      throw new UnauthorizedException('Invalid or expired toke');
+      throw new UnauthorizedException('Invalid or expired token');
 
     if (token !== user.access_token)
-      throw new UnauthorizedException('Token revoke Or Expired');
-    return user;
+      throw new UnauthorizedException('Token revoked or expired');
+
+    // Add roles to returned user object
+    return {
+      ...user,
+      roles: payload.roles, // attach roles from JWT
+    };
   }
 }

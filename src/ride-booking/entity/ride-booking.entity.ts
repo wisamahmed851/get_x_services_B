@@ -19,10 +19,10 @@ export class RideBooking {
   @Column({ type: 'enum', enum: RideType, default: RideType.PRIVATE })
   ride_type: RideType;
 
-  @Column()
+  @Column({nullable: true})
   customer_id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, {nullable: true})
   @JoinColumn({ name: 'customer_id' })
   customer: User;
 

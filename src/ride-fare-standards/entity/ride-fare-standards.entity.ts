@@ -37,6 +37,15 @@ export class RideFareStandard {
   @Column('numeric', { comment: 'Other fixed charges' })
   other_costs: number;
 
+  @Column({ type: 'numeric', nullable: true })
+  discount: number;
+
+  @Column({ type: 'numeric', nullable: true })
+  additional_cost: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  additional_cost_reason: string;
+
   @Column({ type: 'smallint', default: 1, comment: '1=active, 0=inactive' })
   status: number;
 

@@ -9,6 +9,8 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entity/user.entity';
+import { Role } from 'src/roles/entity/roles.entity';
+import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
 
 @Injectable()
 export class UserAuthService {
@@ -16,6 +18,10 @@ export class UserAuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    @InjectRepository(Role)
+    private roleRepo: Repository<Role>,
+    @InjectRepository(UserRole)
+    private userRoleRepo: Repository<UserRole>,
   ) {}
 
   private handleUnknown(err: unknown): never {
@@ -57,7 +63,17 @@ export class UserAuthService {
 
   async login(user: User) {
     try {
-      const payload = { sub: user.id, email: user.email };
+      const roles = await this.userRoleRepo.find({
+        where: { user_id: user.id },
+        relations: ['role'],
+      });
+      const roleNames = roles.map((r) => r.role.name);
+      const payload = {
+        sub: user.id,
+        email: user.email,
+        roles: roleNames,
+      };
+
       const token = this.jwtService.sign(payload);
       user.access_token = token;
 

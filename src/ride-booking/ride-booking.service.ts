@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RideBooking } from './entity/ride-booking.entity';
 import { Repository } from 'typeorm';
 import {
+  CalculateFareDto,
   CreateRideBookingDto,
   UpdateRideBookingDto,
 } from './dtos/create-ride-booking.dto';
@@ -26,6 +27,77 @@ export class RideBookingService {
     @InjectRepository(RideFareStandard)
     private readonly fareRepo: Repository<RideFareStandard>,
   ) {}
+
+  // ride-booking.service.ts
+  async calculateFare(dto: CalculateFareDto) {
+    const { ride_km, ride_timing, ride_delay_time } = dto;
+
+    const fareStandard = await this.fareRepo.findOne({
+      where: { status: 1 },
+    });
+
+    if (!fareStandard) {
+      return {
+        success: false,
+        message: 'No active fare standard found',
+      };
+    }
+
+    // Basic Fare
+    const baseFare = Number(fareStandard.price_per_km) * ride_km;
+
+    // Surcharge
+    const surcharge_amount = (fareStandard.sur_charge / 100) * baseFare;
+
+    // Traffic Delay Penalty
+    const delayPenalty =
+      ride_delay_time > fareStandard.traffic_delay_time
+        ? (fareStandard.traffic_delay_charge / 100) * baseFare
+        : 0;
+
+    // App Fees (fixed)
+    const app_fees_amount = Number(fareStandard.app_fees);
+
+    // Company Fees (%)
+    const company_fees_amount = (fareStandard.company_fees / 100) * baseFare;
+
+    // Driver Fees (%)
+    const driver_fees_amount = (fareStandard.driver_fees / 100) * baseFare;
+
+    // Additional Costs
+    const additional_cost = Number(fareStandard.additional_cost || 0);
+
+    // Discount
+    const discount = Number(fareStandard.discount || 0);
+
+    const fare_amount =
+      baseFare +
+      surcharge_amount +
+      delayPenalty +
+      app_fees_amount +
+      company_fees_amount +
+      additional_cost -
+      discount;
+
+    return {
+      success: true,
+      message: 'Fare calculated successfully',
+      data: {
+        ride_km,
+        ride_timing,
+        ride_delay_time,
+        base_fare: baseFare,
+        surcharge_amount,
+        traffic_delay_amount: delayPenalty,
+        app_fees_amount,
+        company_fees_amount,
+        driver_fees_amount,
+        additional_cost,
+        discount,
+        total_fare: fare_amount,
+      },
+    };
+  }
 
   async create(dto: CreateRideBookingDto, customer_id: number) {
     try {

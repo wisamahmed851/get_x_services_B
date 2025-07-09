@@ -8,16 +8,28 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RideBookingService } from './ride-booking.service';
-import { CreateRideBookingDto, UpdateRideBookingDto } from './dtos/create-ride-booking.dto';
+import {
+  CalculateFareDto,
+  CreateRideBookingDto,
+  UpdateRideBookingDto,
+} from './dtos/create-ride-booking.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserJwtAuthGuard } from 'src/auth/user/user-jwt.guard';
-
+// import { RolesGuard } from 'src/common/guards/roles.guard';
+// import { Roles } from 'src/common/decorators/roles.decorator';
+//  RolesGuard
 @UseGuards(UserJwtAuthGuard)
 @Controller('ride-bookings')
 export class RideBookingController {
   constructor(private readonly service: RideBookingService) {}
 
+  @Post('calculate-fare')
+  calculateFare(@Body() dto: CalculateFareDto) {
+    return this.service.calculateFare(dto);
+  }
+
   @Post('store')
+  // @Roles('customer')
   create(
     @Body() dto: CreateRideBookingDto,
     @CurrentUser('id') customerId: number,
