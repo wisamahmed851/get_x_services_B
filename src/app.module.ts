@@ -20,6 +20,9 @@ import { AdminPermissionModule } from './assign-permission-admin/admin-permissio
 import { SavedPlacesModule } from './saved-places/saved-places.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { RideFareStandardsModule } from './ride-fare-standards/ride-fare-standards.module';
+import { RideBookingModule } from './ride-booking/ride-booking.module';
+import { RideBookingSeederModule } from './ride-booking/seeder/ride-booking-seeder.module';
+import { RideBookingSeederService } from './ride-booking/seeder/ride-booking-seeder.service';
 
 @Module({
   imports: [
@@ -56,14 +59,20 @@ import { RideFareStandardsModule } from './ride-fare-standards/ride-fare-standar
     SavedPlacesModule,
     PaymentMethodsModule,
     RideFareStandardsModule,
+    RideBookingModule,
+    RideBookingSeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements OnApplicationBootstrap {
-  constructor(private readonly rolesSeederService: RolesSeederService) {}
+  constructor(
+    private readonly rolesSeederService: RolesSeederService,
+    private readonly rideBookingSeederService: RideBookingSeederService
+  ) {}
 
   async onApplicationBootstrap() {
     await this.rolesSeederService.seed();
+    await this.rideBookingSeederService.seed();
   }
 }

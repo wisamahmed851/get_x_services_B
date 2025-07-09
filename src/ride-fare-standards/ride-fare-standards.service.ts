@@ -28,9 +28,17 @@ export class RideFareStandardsService {
       const admin = await this.adminRepo.findOne({ where: { id: created_by } });
       if (!admin) throw new BadRequestException('Invalid admin (created_by)');
 
+      await this.fareRepo
+        .createQueryBuilder()
+        .update(RideFareStandard)
+        .set({ status: 0 })
+        .where('status = :status', { status: 1 })
+        .execute();
+
       const record = this.fareRepo.create({
         ...dto,
         created_by: admin,
+        status: 1,
       });
       const saved = await this.fareRepo.save(record);
       return {
@@ -45,7 +53,7 @@ export class RideFareStandardsService {
 
   async findAll() {
     try {
-      const list = await this.fareRepo.find();
+      const list = await this.fareRepo.find({order: {id: 'ASC'}});
       return {
         success: true,
         message: 'All ride fare standards fetched',
@@ -93,6 +101,15 @@ export class RideFareStandardsService {
     try {
       const record = await this.fareRepo.findOne({ where: { id } });
       if (!record) throw new NotFoundException('Ride fare standard not found');
+      if (record.status === 0) {
+        await this.fareRepo
+          .createQueryBuilder()
+          .update(RideFareStandard)
+          .set({ status: 0 })
+          .where('status = :status', { status: 1 })
+          .execute();
+      }
+
       record.status = record.status === 0 ? 1 : 0;
       await this.fareRepo.save(record);
       return {
