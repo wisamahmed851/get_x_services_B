@@ -20,6 +20,7 @@ import { AdminPermissionModule } from './assign-permission-admin/admin-permissio
 import { SavedPlacesModule } from './saved-places/saved-places.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { RideFareStandardsModule } from './ride-fare-standards/ride-fare-standards.module';
+import { RatingModule } from './Rating/rating.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { RideFareStandardsModule } from './ride-fare-standards/ride-fare-standar
     SavedPlacesModule,
     PaymentMethodsModule,
     RideFareStandardsModule,
+    RatingModule
   ],
   controllers: [AppController],
   providers: [AppService],
