@@ -1,4 +1,6 @@
-import { Admin, BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
+import { Admin } from "src/admin/entity/admin.entity";
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class complaintsCaterory {
@@ -36,8 +38,8 @@ export class complaintsCaterory {
         this.updated_at = onlyDate;
     }
 
-    // @ManyToOne(() => Admin)
-    // @JoinColumn({ name: 'created_by' })
-    // admin: Admin
+     @ManyToOne(() => Admin)
+     @JoinColumn({ name: 'created_by' })
+     admin: Admin
 
 }

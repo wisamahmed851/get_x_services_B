@@ -42,7 +42,7 @@ export class ComplaintsCategoryService {
     try {
       const categories = await this.categoryRepo.find({
         where: { status: 1 }, // Only active
-        // relations: ['admin'],
+         relations: ['admin'],
       });
 
       return {
@@ -90,44 +90,51 @@ export class ComplaintsCategoryService {
   }
 
   async update(id: number, dto: UpdateComplainCategoryDto) {
-    try {
-      const result = await this.findOne(id);
-      const category = result.data;
+  try {
+    const result = await this.findOne(id);
+    const category = result.data;
 
-      Object.assign(category, dto, {
-        updated_at: new Date().toISOString().split('T')[0],
-      });
-
-      const updated = await this.categoryRepo.save(category);
-
-      return {
-        success: true,
-        message: `Complaint category with ID ${id} updated successfully.`,
-        data: updated,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException({
-        success: false,
-        message: `Failed to update complaint category with ID ${id}.`,
-        error: error.message,
-      });
+    
+    if (dto.name) {
+      category.name = dto.name;
     }
+    if (dto.icon) {
+      category.icon = dto.icon;
+    }
+
+    category.updated_at = new Date().toISOString().split('T')[0];
+
+    const updated = await this.categoryRepo.save(category);
+
+    return {
+      success: true,
+      message: `Complaint category with ID ${id} updated successfully.`,
+      data: updated,
+    };
+  } catch (error) {
+    throw new InternalServerErrorException({
+      success: false,
+      message: `Failed to update complaint category with ID ${id}.`,
+      error: error.message,
+    });
   }
+}
+
 
   async delete(id: number) {
     try {
       const result = await this.findOne(id);
       const category = result.data;
 
-      category.status = 0;
+      category.status = category.status === 0 ? 1 : 0;
       category.updated_at = new Date().toISOString().split('T')[0];
 
       await this.categoryRepo.save(category);
-
+      const messge = category.status === 0 ? "Marked As InActive" : "'Marked As Active";
       return {
         success: true,
-        message: `Complaint category with ID ${id} marked as inactive.`,
-        data: [],
+        message: messge,
+        data: category,
       };
     } catch (error) {
       throw new InternalServerErrorException({

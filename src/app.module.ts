@@ -61,6 +61,7 @@ import { ComplaintsCategoryModule } from './complaints-category/complaints-categ
     SavedPlacesModule,
     PaymentMethodsModule,
     RideFareStandardsModule,
+    RideBookingSeederModule,
     RatingModule,
     ComplaintsCategoryModule,
   ],

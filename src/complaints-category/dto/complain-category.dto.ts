@@ -1,6 +1,6 @@
-export class CreateComplainCategoryDto{
-    name: number;
-    icon: number;
+export class CreateComplainCategoryDto {
+  name: string;
+  icon: string;
 }
 
 import { IsOptional, IsString } from 'class-validator';
