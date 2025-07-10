@@ -64,6 +64,7 @@ import { ComplaintsCategoryModule } from './complaints-category/complaints-categ
     RideBookingSeederModule,
     RatingModule,
     ComplaintsCategoryModule,
+    RideBookingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

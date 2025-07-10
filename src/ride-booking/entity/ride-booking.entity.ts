@@ -26,22 +26,25 @@ export class RideBooking {
   @JoinColumn({ name: 'customer_id' })
   customer: User;
 
-  @Column()
+  @Column({nullable: true})
   driver_id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, {nullable: true})
   @JoinColumn({ name: 'driver_id' })
   driver: User;
 
-  @Column()
+  @Column({nullable: true})
   fare_standard_id: number;
 
-  @ManyToOne(() => RideFareStandard)
+  @ManyToOne(() => RideFareStandard, {nullable: true})
   @JoinColumn({ name: 'fare_standard_id' })
   fare_standard: RideFareStandard;
 
   @Column({ type: 'numeric', nullable: true })
-  fare_amount: number;
+  base_fare: number;
+
+  @Column({ type: 'numeric', nullable: true })
+  total_fare: number;
 
   @Column({ type: 'numeric', nullable: true })
   discount: number;

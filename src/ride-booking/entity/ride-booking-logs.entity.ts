@@ -15,6 +15,9 @@ export class RideBookingLog {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  ride_id: number;
+  
   @ManyToOne(() => RideBooking, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ride_id' })
   ride: RideBooking;

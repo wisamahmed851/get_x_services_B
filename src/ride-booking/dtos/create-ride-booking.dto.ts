@@ -1,20 +1,34 @@
+import { Type } from 'class-transformer';
 import {
+  ArrayMinSize,
+  IsArray,
   IsEnum,
+  IsLatitude,
+  IsLongitude,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
-import { RideStatus, RideType } from 'src/common/enums/ride-booking.enum';
+import {
+  RideLocationType,
+  RideStatus,
+  RideType,
+} from 'src/common/enums/ride-booking.enum';
 
-export class CreateRideBookingDto {
+export class RideBookingDto {
   @IsNotEmpty()
   @IsEnum(RideType)
   type: RideType;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
   driver_id: number;
+
+  @IsOptional()
+  @IsNumber()
+  fare_id: number;
 
   @IsOptional()
   @IsNumber()
@@ -25,8 +39,32 @@ export class CreateRideBookingDto {
   additional_costs?: number;
 
   @IsOptional()
-  @IsString()
-  additional_cost_reason?: string;
+  @IsNumber()
+  driver_fees_amount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  company_fees_amount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  app_fees_amount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  traffic_delay_amount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  surcharge_amount?: number;
+
+  @IsOptional()
+  @IsNumber()
+  base_fare?: number;
+
+  @IsOptional()
+  @IsNumber()
+  total_fare?: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -40,9 +78,11 @@ export class CreateRideBookingDto {
   @IsNumber()
   ride_delay_time?: number;
 
-  @IsOptional()
-  @IsString()
-  cancellation_reason?: string;
+  @IsArray()
+  @ArrayMinSize(2)
+  @ValidateNested({ each: true })
+  @Type(() => RideRoutingInput)
+  routing: RideRoutingInput[];
 }
 
 export class UpdateRideBookingDto {
@@ -96,4 +136,38 @@ export class CalculateFareDto {
 
   @IsNumber()
   ride_delay_time: number;
+}
+
+export class RideRoutingInput {
+  @IsNotEmpty()
+  @IsEnum(RideLocationType)
+  type: RideLocationType;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsLatitude()
+  latitude: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  @IsLongitude()
+  longitude: number;
+}
+
+export class AcceptRideDto {
+  @IsLatitude()
+  latitude: number;
+
+  @IsLongitude()
+  longitude: number;
+
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+}
+
+export class CancelRideDto {
+  @IsString()
+  @IsNotEmpty()
+  reason: string;
 }

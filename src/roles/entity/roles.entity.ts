@@ -10,6 +10,7 @@ export class Role {
 
   @Column({ type: 'varchar', default: 'user' }) // 'admin' or 'user'
   guard: string;
+  
   @Column({
     type: 'smallint',
     default: 1,
