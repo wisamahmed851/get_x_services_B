@@ -2,11 +2,13 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { UserDetails } from './user_details.entity';
 import { Exclude } from 'class-transformer';
+import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
 
 @Entity()
 export class User {
@@ -36,6 +38,12 @@ export class User {
   city: string;
 
   @Column({ nullable: true })
+  street: string;
+
+  @Column({ nullable: true })
+  district: string;
+
+  @Column({ nullable: true })
   image: string;
 
   @Column({
@@ -53,6 +61,14 @@ export class User {
     comment: '0 = not verified, 1 = verified',
   })
   isVarified: number;
+
+  @Column({
+    type: 'smallint',
+    default: 1,
+    nullable: false,
+    comment: '1 for online and 0 for offline',
+  })
+  isOnline: number;
 
   @Column({ type: 'date' })
   created_at: string;
@@ -72,4 +88,7 @@ export class User {
 
   @Column({ nullable: true })
   access_token: string;
+
+  @OneToMany(() => UserRole, (userRole) => userRole.role)
+  userRoles: UserRole[];
 }

@@ -13,6 +13,7 @@ import { Role } from 'src/roles/entity/roles.entity';
 import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
 import { UpdateProfileDto, UserRegisterDto } from './dtos/user-auth.dto';
 import { cleanObject } from 'src/common/utils/sanitize.util';
+import { response } from 'express';
 
 @Injectable()
 export class UserAuthService {
@@ -42,17 +43,65 @@ export class UserAuthService {
     const oldUsers = await this.userRepository.find({
       where: { email: body.email },
     });
-    console.log(oldUsers);
+
     if (oldUsers.length > 0) {
-      throw new BadRequestException('User with this email already exist');
+      throw new BadRequestException('User with this email already exists');
     }
-    if (body.password) body.password = await bcrypt.hash(body.password, 10);
+
+    if (body.password) {
+      body.password = await bcrypt.hash(body.password, 10);
+    }
+
     const user = this.userRepository.create({
       name: body.name,
       email: body.email,
       password: body.password,
+      phone: body.phone,
+      gender: body.gender,
     });
-    return await this.userRepository.save(user);
+
+    const savedUser = await this.userRepository.save(user);
+
+    let role;
+    if (body.role === 'customer' || body.role === 'driver') {
+      role = await this.roleRepo.findOne({
+        where: { name: body.role },
+        select: {
+          id: true,
+          name: true,
+        },
+      });
+      if (!role) throw new BadRequestException('Role Not Found');
+
+      const userRole = this.userRoleRepo.create({
+        user: savedUser,
+        role: role,
+      });
+      await this.userRoleRepo.save(userRole);
+    }
+
+    // Fetch user with roles (eagerly or via join)
+    const userWithRole = await this.userRepository.findOne({
+      where: { id: savedUser.id },
+      relations: ['userRoles', 'userRoles.role'],
+    });
+
+    // Clean user response (remove password)
+    if (!userWithRole) {
+      throw new InternalServerErrorException(
+        'User not found after registration',
+      );
+    }
+    const { password, userRoles, ...userWithoutPassword } = userWithRole;
+
+    return {
+      success: true,
+      message: 'User is registered successfully',
+      data: {
+        user: userWithoutPassword,
+        role: role,
+      },
+    };
   }
 
   async validateUser(email: string, password: string) {
@@ -85,6 +134,12 @@ export class UserAuthService {
       const roles = await this.userRoleRepo.find({
         where: { user_id: user.id },
         relations: ['role'],
+        select: {
+          role: {
+            id: true,
+            name: true,
+          },
+        },
       });
       const roleNames = roles.map((r) => r.role.name);
       const payload = {
@@ -93,19 +148,25 @@ export class UserAuthService {
         roles: roleNames,
       };
 
-      const token = this.jwtService.sign(payload);
+      const token = this.jwtService.sign(payload, { expiresIn: '7d' });
       user.access_token = token;
 
       await this.userRepository.save(user);
 
       const { password, access_token, ...cleanUser } = user;
-
+      const userRole = roles[0]?.role;
       return {
         success: true,
         message: 'User has been successfully logged in',
         data: {
           access_token: token,
           user: cleanUser,
+          role: userRole
+            ? {
+                id: userRole.id,
+                name: userRole.name,
+              }
+            : null,
         },
       };
     } catch (err) {
@@ -121,6 +182,12 @@ export class UserAuthService {
           id: true,
           name: true,
           email: true,
+          phone: true,
+          address: true,
+          gender: true,
+          city: true,
+          street: true,
+          district: true,
           image: true,
           status: true,
           created_at: true,
@@ -150,7 +217,10 @@ export class UserAuthService {
       if (!exist) {
         throw new NotFoundException('User Not Found');
       }
+      if (body.name !== undefined) exist.name = body.name;
       if (body.city !== undefined) exist.city = body.city;
+      if (body.street !== undefined) exist.street = body.street;
+      if (body.district !== undefined) exist.district = body.district;
       if (body.address !== undefined) exist.address = body.address;
       if (body.gender !== undefined) exist.gender = body.gender;
       if (body.phone !== undefined) exist.phone = body.phone;
@@ -167,6 +237,7 @@ export class UserAuthService {
       this.handleUnknown(err);
     }
   }
+
   async changePassword(
     body: { oldPassword: string; newPassword: string },
     user: User,
@@ -206,6 +277,26 @@ export class UserAuthService {
         success: true,
         message: 'Password updated successfully',
         data: {},
+      };
+    } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  async modeChnage(user: User) {
+    try {
+      const currentUser = await this.userRepository.findOne({
+        where: { id: user.id },
+      });
+      if (!currentUser) throw new NotFoundException('Driver not Found');
+
+      currentUser.isOnline = currentUser.isOnline === 1 ? 0 : 1;
+      const saved = await this.userRepository.save(currentUser);
+      const is = currentUser.isOnline === 1 ? 'Online' : 'Ofline';
+      return {
+        success: true,
+        message: `Driver is ${is} now`,
+        data: saved,
       };
     } catch (err) {
       this.handleUnknown(err);
