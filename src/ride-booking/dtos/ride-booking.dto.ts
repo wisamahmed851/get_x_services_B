@@ -16,6 +16,7 @@ import {
   RideStatus,
   RideType,
 } from 'src/common/enums/ride-booking.enum';
+import { Column } from 'typeorm';
 
 export class RideRequestDto {
   @IsNotEmpty()
@@ -48,22 +49,32 @@ export class RideRoutingInput {
 
   @IsLongitude()
   longitude: number;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column()
+  seq: number;
 }
 
 // ----------- Driver Offer (Driver → says "I can take it")
 export class DriverOfferDto {
   @IsNumber()
   requestId: number;
+
+  @IsNumber()
+  longitude: number;
+
+  @IsNumber()
+  latitude: number;
 }
 
 // ----------- Customer Confirms (Final Booking)
-export class ConfirmRideDto {
-  @IsNumber()
-  requestId: number;
-
-  @IsNumber()
-  driverId: number;
+export class ConfirmDriverDto {
+  @IsNumber() requestId: number;
+  @IsNumber() driverId: number;
 }
+
 
 // ----------- For compatibility (Final booking fields)
 export class RideBookingDto {

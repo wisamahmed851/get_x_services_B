@@ -9,16 +9,17 @@ import {
 } from '@nestjs/common';
 import { RideBookingService } from './ride-booking.service';
 import {
-  AcceptRideDto,
   CalculateFareDto,
   CancelRideDto,
-  RideBookingDto,
-  UpdateRideBookingDto,
-} from './dtos/create-ride-booking.dto';
+  ConfirmDriverDto,
+  DriverOfferDto,
+  RideRequestDto,
+} from './dtos/ride-booking.dto';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserJwtAuthGuard } from 'src/auth/user/user-jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { User } from 'src/users/entity/user.entity';
 
 @UseGuards(UserJwtAuthGuard, RolesGuard)
 @Controller('ride-bookings')
@@ -29,25 +30,37 @@ export class RideBookingController {
   calculateFare(@Body() dto: CalculateFareDto) {
     return this.service.calculateFare(dto);
   }
+  // 1. Customer Requests a Ride
   @Roles('customer')
-  @Post('booking')
-  create(@Body() dto: RideBookingDto, @CurrentUser('id') customerId: number) {
-    return this.service.create(dto, customerId);
+  @Post('request')
+  requestRide(
+    @Body() dto: RideRequestDto,
+    @CurrentUser('id') customerId: number,
+  ) {
+    return this.service.requestRide(dto, customerId);
   }
 
+  // 2. Driver Offers (Accepts Request)
   @Roles('driver')
-  @Post('accept-ride/:id')
-  acceptRide(
-    @Param('id') id: number,
-    @CurrentUser('id') driverId: number,
-    @Body() dto: AcceptRideDto,
+  @Post('offer')
+  offerRide(@Body() dto: DriverOfferDto, @CurrentUser('id') driverId: number) {
+    return this.service.offerRide(dto.requestId, driverId, dto);
+  }
+
+  // 3. Customer Confirms Driver (Booking Created)
+  @Roles('customer')
+  @Post('confirm')
+  async confirmDriver(
+    @Body() dto: ConfirmDriverDto,
+    @CurrentUser() user: User,
   ) {
-    return this.service.acceptRide(id, driverId, dto);
+    return this.service.confirmDriver(dto.requestId, dto.driverId, user.id);
   }
 
   @Roles('driver')
   @Get('arrived-ride/:id')
   arrivedRide(@Param('id') id: number, @CurrentUser('id') driver: number) {
+    console.log("hello")
     return this.service.arrivedRide(id, driver);
   }
 
@@ -57,7 +70,7 @@ export class RideBookingController {
     @Param('id') id: number,
     @CurrentUser('id') driverId: number,
   ) {
-    return this.service.verifyAndStartRide(id, driverId);
+    return this.service.startRide(id, driverId);
   }
 
   @Roles('driver')
