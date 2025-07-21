@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { VehicleRegistrationModule } from './vehicle-registration/vehicle-registration.module';
 import { UserAuthModule } from './auth/user/user-auth.module';
 import { RolesModule } from './roles/roles.module';
 import { RolesSeederModule } from './roles/seeder/roles-seeder.module';
@@ -19,13 +18,7 @@ import { UserPermissionModule } from './assign-permission-user/user-permission.m
 import { AdminPermissionModule } from './assign-permission-admin/admin-permission.module';
 import { SavedPlacesModule } from './saved-places/saved-places.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
-import { RideFareStandardsModule } from './ride-fare-standards/ride-fare-standards.module';
-import { RideBookingModule } from './ride-booking/ride-booking.module';
-import { RideBookingSeederModule } from './ride-booking/seeder/ride-booking-seeder.module';
-import { RideBookingSeederService } from './ride-booking/seeder/ride-booking-seeder.service';
-import { RatingModule } from './Rating/rating.module';
 import { ComplaintsCategoryModule } from './complaints-category/complaints-category.module';
-import { RideModule } from './ride-socket/ride.module';
 import { UserAuthSeederModule } from './auth/user/seeder/user-auth-seeder.module';
 import { UserAuthSeederService } from './auth/user/seeder/user-auth-seeder.service';
 import { AdminAuthSeederModule } from './admin/seeder/admin-auth-seeder.module';
@@ -54,7 +47,6 @@ import { ScheduleModule } from '@nestjs/schedule';
       }),
     }),
     UsersModule,
-    VehicleRegistrationModule,
     UserAuthModule,
     RolesModule,
     RolesSeederModule,
@@ -68,12 +60,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     AdminPermissionModule,
     SavedPlacesModule,
     PaymentMethodsModule,
-    RideFareStandardsModule,
-    RideBookingSeederModule,
-    RatingModule,
     ComplaintsCategoryModule,
-    RideBookingModule,
-    RideModule,
     UserAuthSeederModule,
     AdminAuthSeederModule,
   ],
@@ -83,14 +70,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 export class AppModule implements OnApplicationBootstrap {
   constructor(
     private readonly rolesSeederService: RolesSeederService,
-    private readonly rideBookingSeederService: RideBookingSeederService,
     private readonly userAuthSeederService: UserAuthSeederService, // ✅ Inject it here
     private readonly adminAuthSeederService: AdminAuthSeederService,
-  ) {}
+  ) { }
 
   async onApplicationBootstrap() {
     await this.rolesSeederService.seed();
-    await this.rideBookingSeederService.seed();
     await this.userAuthSeederService.seed(); // ✅ Run user seeder
     await this.adminAuthSeederService.seed();
   }

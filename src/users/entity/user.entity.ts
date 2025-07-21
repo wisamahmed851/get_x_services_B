@@ -35,9 +35,6 @@ export class User {
   gender: string;
 
   @Column({ nullable: true })
-  city: string;
-
-  @Column({ nullable: true })
   street: string;
 
   @Column({ nullable: true })
