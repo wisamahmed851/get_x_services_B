@@ -25,7 +25,7 @@ export class UserAuthService {
     private roleRepo: Repository<Role>,
     @InjectRepository(UserRole)
     private userRoleRepo: Repository<UserRole>,
-  ) {}
+  ) { }
 
   private handleUnknown(err: unknown): never {
     if (
@@ -165,9 +165,9 @@ export class UserAuthService {
           user: cleanUser,
           role: userRole
             ? {
-                id: userRole.id,
-                name: userRole.name,
-              }
+              id: userRole.id,
+              name: userRole.name,
+            }
             : null,
         },
       };
@@ -187,7 +187,6 @@ export class UserAuthService {
           phone: true,
           address: true,
           gender: true,
-          city: true,
           street: true,
           district: true,
           image: true,
@@ -220,7 +219,6 @@ export class UserAuthService {
         throw new NotFoundException('User Not Found');
       }
       if (body.name !== undefined) exist.name = body.name;
-      if (body.city !== undefined) exist.city = body.city;
       if (body.street !== undefined) exist.street = body.street;
       if (body.district !== undefined) exist.district = body.district;
       if (body.address !== undefined) exist.address = body.address;

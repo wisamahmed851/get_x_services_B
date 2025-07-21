@@ -24,6 +24,7 @@ import { UserAuthSeederService } from './auth/user/seeder/user-auth-seeder.servi
 import { AdminAuthSeederModule } from './admin/seeder/admin-auth-seeder.module';
 import { AdminAuthSeederService } from './admin/seeder/admin-auth-seeder.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CityModule } from './city/city.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     ComplaintsCategoryModule,
     UserAuthSeederModule,
     AdminAuthSeederModule,
+    CityModule,
   ],
   controllers: [AppController],
   providers: [AppService],
