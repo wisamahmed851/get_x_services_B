@@ -2,6 +2,8 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -9,6 +11,8 @@ import {
 import { UserDetails } from './user_details.entity';
 import { Exclude } from 'class-transformer';
 import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
+import { City } from 'src/city/entity/city.entity';
+import { Zone } from 'src/zone/entity/zone.entity';
 
 @Entity()
 export class User {
@@ -42,6 +46,20 @@ export class User {
 
   @Column({ nullable: true })
   image: string;
+
+  @Column({ nullable: true })
+  city_id: number;
+
+  @ManyToOne(() => City, { onDelete: 'CASCADE', eager: true })
+  @JoinColumn({ name: 'city_isd' })
+  city: City;
+
+  @Column({ nullable: true })
+  zone_id: number;
+
+  @ManyToOne(() => Zone, { onDelete: 'CASCADE', eager: true })
+  @JoinColumn({ name: 'zone_id' })
+  zone: Zone;
 
   @Column({
     type: 'smallint',
@@ -85,6 +103,12 @@ export class User {
 
   @Column({ nullable: true })
   access_token: string;
+
+  @Column({ nullable: true })
+  refresh_token: string;
+
+  @Column({ nullable: true })
+  fcm_token: string;
 
   @OneToMany(() => UserRole, (userRole) => userRole.role)
   userRoles: UserRole[];
