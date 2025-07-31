@@ -13,18 +13,21 @@ export class UserDetails {
   id: number;
 
   @Column()
-  license_no: string;
-
-  @Column()
-  license_validity_date: Date;
-
-  @Column()
   identity_no: string;
 
   @Column()
   identity_validity_date: Date;
 
+  @Column({ nullable: true })
+  identity_card_front_url: string;
+
+  @Column({ nullable: true })
+  identity_card_back_url: string;
+
+  @Column()
+  user_id: number
+
   @OneToOne(() => User, (user) => user.details)
-  @JoinColumn()
+  @JoinColumn({ name: 'user_id' })
   user: User;
 }

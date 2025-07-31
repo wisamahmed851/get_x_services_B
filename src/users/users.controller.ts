@@ -9,12 +9,13 @@ import {
   Post,
   Req,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
 import { UserDetailsDto } from './dtos/user_details.dto';
 import { User } from './entity/user.entity';
@@ -25,7 +26,7 @@ import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
 @Controller('admin/users')
 @UseGuards(AdminJwtAuthGuard)
 export class UsersController {
-  constructor(private userService: UsersService) {}
+  constructor(private userService: UsersService) { }
 
   @Post('store')
   @UseInterceptors(FileInterceptor('image', multerConfig('uploads')))
@@ -79,7 +80,23 @@ export class UsersController {
   // crud of user details
   @Post('detailsCreate')
   @UseGuards(UserJwtAuthGuard)
-  userDetailsStore(@Body() data: UserDetailsDto, @Req() req: Request) {
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'identity_card_front', maxCount: 1 },
+    { name: 'identity_card_back', maxCount: 1 },
+  ], multerConfig('uploads')))
+  userDetailsStore(
+    @Body() data: UserDetailsDto,
+    @UploadedFiles() files: { identity_card_front?: Express.Multer.File[], identity_card_back?: Express.Multer.File[] },
+    @Req() req: Request,
+  ) {
+    const identity_card_front_url = files.identity_card_front?.[0]?.path;
+    const identity_card_back_url = files.identity_card_back?.[0]?.path;
+    if (identity_card_front_url) {
+      data.identity_card_front_url = identity_card_front_url;
+    }
+    if (identity_card_back_url) {
+      data.identity_card_back_url = identity_card_back_url;
+    }
     return this.userService.create_user_details(data, req.user as User);
   }
 }

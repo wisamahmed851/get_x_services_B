@@ -185,18 +185,11 @@ export class UsersService {
       });
       if (exists) throw new BadRequestException('User details already exist');
 
-      /* ✅ NEW: optional uniqueness guard on license_no / identity_no */
-      const licDup = await this.userDetailsRepository.findOne({
-        where: { license_no: dto.license_no },
-      });
-      if (licDup)
-        throw new BadRequestException('License number already in use');
-
       const details = this.userDetailsRepository.create({
-        license_no: dto.license_no,
-        license_validity_date: dto.license_validity_date,
         identity_no: dto.identity_no,
         identity_validity_date: dto.identity_validity_date,
+        identity_card_front_url: dto.identity_card_front_url,
+        identity_card_back_url: dto.identity_card_back_url,
         user,
       });
 

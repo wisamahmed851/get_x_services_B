@@ -112,4 +112,5 @@ export class User {
 
   @OneToMany(() => UserRole, (userRole) => userRole.role)
   userRoles: UserRole[];
+
 }
