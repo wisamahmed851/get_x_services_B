@@ -33,6 +33,12 @@ export class UserRegisterDto {
 
   @IsNotEmpty()
   role: string;
+
+  @IsOptional()
+  city_id: number;
+
+  @IsOptional()
+  zone_id: number;
 }
 
 export class UpdateProfileDto {
@@ -59,4 +65,10 @@ export class UpdateProfileDto {
 
   @IsOptional()
   image: string;
+
+  @IsNotEmpty()
+  city_id: number;
+
+  @IsNotEmpty()
+  zone_id: number;
 }

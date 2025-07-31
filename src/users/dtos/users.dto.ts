@@ -20,7 +20,10 @@ export class CreateUserDto {
   address: string;
 
   @IsNotEmpty()
-  city: string;
+  city_id: number;
+
+  @IsNotEmpty()
+  zone_id: number;
 
   @IsOptional()
   image: string;

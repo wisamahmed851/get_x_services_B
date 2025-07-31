@@ -3,7 +3,7 @@ import { Admin } from "src/admin/entity/admin.entity";
 import { User } from "src/users/entity/user.entity";
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: "cities" })
+@Entity({ name: "zones" })
 export class Zone {
     @PrimaryGeneratedColumn()
     id: number;

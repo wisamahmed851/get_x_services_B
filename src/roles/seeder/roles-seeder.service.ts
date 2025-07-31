@@ -16,7 +16,7 @@ export class RolesSeederService {
       { name: 'admin', guard: 'admin' },
       { name: 'manager', guard: 'admin' },
       { name: 'customer', guard: 'customer' },
-      { name: 'driver', guard: 'user' },
+      { name: 'provider', guard: 'user' },
     ];
 
     for (const roleData of defaultRoles) {

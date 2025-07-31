@@ -14,6 +14,8 @@ import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
 import { UpdateProfileDto, UserRegisterDto } from './dtos/user-auth.dto';
 import { cleanObject } from 'src/common/utils/sanitize.util';
 import { response } from 'express';
+import { City } from 'src/city/entity/city.entity';
+import { Zone } from 'src/zone/entity/zone.entity';
 
 @Injectable()
 export class UserAuthService {
@@ -25,6 +27,10 @@ export class UserAuthService {
     private roleRepo: Repository<Role>,
     @InjectRepository(UserRole)
     private userRoleRepo: Repository<UserRole>,
+    @InjectRepository(City)
+    private cityRepo: Repository<City>,
+    @InjectRepository(Zone)
+    private zoneRepo: Repository<Zone>,
   ) { }
 
   private handleUnknown(err: unknown): never {
@@ -51,19 +57,30 @@ export class UserAuthService {
     if (body.password) {
       body.password = await bcrypt.hash(body.password, 10);
     }
-
-    const user = this.userRepository.create({
+    if (body.city_id) {
+      const city = await this.cityRepo.findOne({ where: { id: body.city_id } });
+      if (!city) throw new NotFoundException('City not found');
+    }
+    if (body.zone_id) {
+      const zone = await this.zoneRepo.findOne({ where: { id: body.zone_id } });
+      if (!zone) throw new NotFoundException('Zone not found');
+    }
+    const user: User = this.userRepository.create({
       name: body.name,
       email: body.email,
       password: body.password,
       phone: body.phone,
       gender: body.gender,
+      zone_id: body.zone_id,
+      city_id: body.city_id,
     });
+
+
 
     const savedUser = await this.userRepository.save(user);
 
     let role;
-    if (body.role === 'customer' || body.role === 'driver') {
+    if (body.role === 'customer' || body.role === 'provider') {
       role = await this.roleRepo.findOne({
         where: { name: body.role },
         select: {

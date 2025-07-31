@@ -51,7 +51,7 @@ export class User {
   city_id: number;
 
   @ManyToOne(() => City, { onDelete: 'CASCADE', eager: true })
-  @JoinColumn({ name: 'city_isd' })
+  @JoinColumn({ name: 'city_id' })
   city: City;
 
   @Column({ nullable: true })

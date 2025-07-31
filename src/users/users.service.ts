@@ -15,6 +15,8 @@ import * as bcrypt from 'bcrypt';
 import { Exclude, instanceToPlain } from 'class-transformer';
 import { Role } from 'src/roles/entity/roles.entity';
 import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
+import { City } from 'src/city/entity/city.entity';
+import { Zone } from 'src/zone/entity/zone.entity';
 
 @Injectable()
 export class UsersService {
@@ -27,7 +29,11 @@ export class UsersService {
     private roleRepo: Repository<Role>,
     @InjectRepository(UserRole)
     private userRoleRepo: Repository<UserRole>,
-  ) {}
+    @InjectRepository(City)
+    private cityRepo: Repository<City>,
+    @InjectRepository(Zone)
+    private zoneRepo: Repository<Zone>,
+  ) { }
 
   /* ─────────────────────────────── CREATE USER ─────────────────────────────── */
   async storeUser(dto: CreateUserDto) {
@@ -39,9 +45,23 @@ export class UsersService {
         throw new BadRequestException('User with this email already exists');
 
       if (dto.password) dto.password = await bcrypt.hash(dto.password, 10);
-
+      const city = await this.cityRepo.findOne({ where: { id: dto.city_id } });
+      if (!city) throw new NotFoundException('City not found');
+      const zone = await this.zoneRepo.findOne({ where: { id: dto.zone_id } });
+      if (!zone) throw new NotFoundException('Zone not found');
       const saved = await this.userRepository.save(
-        this.userRepository.create(dto),
+        this.userRepository.create({
+          name: dto.name,
+          email: dto.email,
+          password: dto.password,
+          phone: dto.phone,
+          address: dto.address,
+          city_id: dto.city_id,
+          city: city,
+          zone_id: dto.zone_id,
+          zone: zone,
+          image: dto.image,
+        }),
       );
       const role = await this.roleRepo.findOne({ where: { id: dto.role_id } });
       if (!role) throw new NotFoundException('Role not found');
@@ -50,6 +70,7 @@ export class UsersService {
         user: saved,
         role_id: role.id,
         role: role,
+        
       });
       await this.userRoleRepo.save(userRole);
       const { password, access_token, ...clean } = saved;

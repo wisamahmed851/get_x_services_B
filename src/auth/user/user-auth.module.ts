@@ -7,10 +7,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserJwtStrategy } from './user-jwt.strategy';
 import { Role } from 'src/roles/entity/roles.entity';
 import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
+import { City } from 'src/city/entity/city.entity';
+import { Zone } from 'src/zone/entity/zone.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role, UserRole]), // ✅ THIS LINE IS REQUIRED
+    TypeOrmModule.forFeature([User, Role, UserRole, City, Zone]), // ✅ THIS LINE IS REQUIRED
     JwtModule.register({
       secret: 'user-secret-key',
       signOptions: { expiresIn: '7d' },
@@ -20,4 +22,4 @@ import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
   providers: [UserAuthService, UserJwtStrategy],
   exports: [UserAuthService],
 })
-export class UserAuthModule {}
+export class UserAuthModule { }

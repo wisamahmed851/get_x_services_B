@@ -108,4 +108,8 @@ export class UserAuthSeederService {
 
     this.logger.log(`User ${email} created with role ${role.name}`);
   }
+
+  /* private async seedlocations({
+
+  }) */
 }
