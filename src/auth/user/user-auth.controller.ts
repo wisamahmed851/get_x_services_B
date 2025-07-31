@@ -5,6 +5,7 @@ import {
   HttpCode,
   Post,
   UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -14,14 +15,14 @@ import { UserJwtAuthGuard } from './user-jwt.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/entity/user.entity';
 import { UpdateProfileDto, UserRegisterDto } from './dtos/user-auth.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'src/common/utils/multer.config';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 
 @Controller('user')
 export class UserAuthController {
-  constructor(private readonly userAuthService: UserAuthService) {}
+  constructor(private readonly userAuthService: UserAuthService) { }
 
   @Post('login')
   @HttpCode(200)
@@ -34,7 +35,23 @@ export class UserAuthController {
   }
 
   @Post('register')
-  async register(@Body() body: UserRegisterDto) {
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'identity_card_front', maxCount: 1 },
+    { name: 'identity_card_back', maxCount: 1 }
+  ], multerConfig('uploads')))
+  async register(
+    @Body() body: UserRegisterDto,
+    @UploadedFiles() files: {
+      identity_card_front?: Express.Multer.File;
+      identity_card_back?: Express.Multer.File;
+    }
+  ) {
+    if (files?.identity_card_front?.[0]) {
+      body.identity_card_front_url = files.identity_card_front[0].filename;
+    }
+    if (files?.identity_card_back?.[0]) {
+      body.identity_card_back_url = files.identity_card_back[0].filename;
+    }
     return this.userAuthService.register(body);
   }
 

@@ -39,6 +39,18 @@ export class UserRegisterDto {
 
   @IsOptional()
   zone_id: number;
+
+  @IsOptional()
+  identity_no: string;
+
+  @IsOptional()
+  identity_validity_date: Date;
+
+  @IsOptional()
+  identity_card_front_url: string;
+
+  @IsOptional()
+  identity_card_back_url: string;
 }
 
 export class UpdateProfileDto {
