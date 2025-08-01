@@ -146,12 +146,13 @@ export class UserAuthService {
             user_id: savedUser.id,
           });
         const savedUserDetails = await queryRunner.manager.save(UserDetails, userDetails)
+        // savedUser.userDetails = savedUserDetails;
       }
       await queryRunner.commitTransaction();
       // Fetch full user with role
       const userWithRole = await queryRunner.manager.findOne(User, {
         where: { id: savedUser.id },
-        relations: ['userRoles', 'userRoles.role'],
+        relations: ['userRoles', 'userRoles.role', 'userDetails'],
       });
 
       if (!userWithRole) {
@@ -168,7 +169,10 @@ export class UserAuthService {
         },
       };
     } catch (err) {
-      await queryRunner.rollbackTransaction();
+
+      if (queryRunner.isTransactionActive) {
+        await queryRunner.rollbackTransaction();
+      }
       console.error('Registration error:', err);
       this.handleUnknown(err)
     } finally {

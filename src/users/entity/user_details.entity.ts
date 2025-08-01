@@ -23,11 +23,12 @@ export class UserDetails {
 
   @Column({ nullable: true })
   identity_card_back_url: string;
+  
 
   @Column()
   user_id: number
 
-  @OneToOne(() => User, (user) => user.details)
+  @OneToOne(() => User, (user) => user.userDetails)
   @JoinColumn({ name: 'user_id' })
   user: User;
 }

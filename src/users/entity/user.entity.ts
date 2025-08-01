@@ -90,6 +90,7 @@ export class User {
 
   @Column({ type: 'date' })
   updated_at: string;
+  
 
   @BeforeInsert()
   setCreateDateParts() {
@@ -99,7 +100,7 @@ export class User {
     this.updated_at = onlyDate;
   }
   @OneToOne(() => UserDetails, (userDetails) => userDetails.user)
-  details: UserDetails;
+  userDetails: UserDetails;
 
   @Column({ nullable: true })
   access_token: string;

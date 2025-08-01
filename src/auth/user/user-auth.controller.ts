@@ -60,6 +60,7 @@ export class UserAuthController {
   async profile(@CurrentUser() user: User) {
     return await this.userAuthService.profile(user);
   }
+  
   @UseGuards(UserJwtAuthGuard)
   @Post('update-profile')
   @UseInterceptors(FileInterceptor('image', multerConfig('uploads')))
