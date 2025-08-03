@@ -20,7 +20,7 @@ export class SavedPlace {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column()
+  @Column({nullable: true})
   name: string;
 
   @Column()
