@@ -34,6 +34,16 @@ export class UserAuthController {
     return await this.userAuthService.login(user);
   }
 
+  @Post('refresh-token')
+  async refreshToken(@Body('refresh_token') refreshToken: string) {
+    // return (refreshToken);
+    if (!refreshToken) {
+      throw new Error('Refresh token is required');
+    }
+    return await this.userAuthService.refreshToken(refreshToken);
+
+  }
+
   @Post('register')
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'identity_card_front', maxCount: 1 },
@@ -60,7 +70,7 @@ export class UserAuthController {
   async profile(@CurrentUser() user: User) {
     return await this.userAuthService.profile(user);
   }
-  
+
   @UseGuards(UserJwtAuthGuard)
   @Post('update-profile')
   @UseInterceptors(FileInterceptor('image', multerConfig('uploads')))

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -26,7 +26,6 @@ export class UserJwtStrategy extends PassportStrategy(Strategy, 'user-jwt') {
     const user = await this.userRepo.findOne({
       where: { id: payload.sub },
     });
-
     if (!user || !user.access_token)
       throw new UnauthorizedException('Invalid or expired token');
 

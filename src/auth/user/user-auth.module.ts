@@ -16,7 +16,7 @@ import { UserDetails } from 'src/users/entity/user_details.entity';
     TypeOrmModule.forFeature([User, Role, UserRole, City, Zone, UserDetails]), // ✅ THIS LINE IS REQUIRED
     JwtModule.register({
       secret: 'user-secret-key',
-      signOptions: { expiresIn: '7d' },
+      signOptions: { expiresIn: '30m' },
     }),
   ],
   controllers: [UserAuthController],

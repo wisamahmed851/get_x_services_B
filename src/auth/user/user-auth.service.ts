@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -12,7 +13,7 @@ import { User } from 'src/users/entity/user.entity';
 import { Role } from 'src/roles/entity/roles.entity';
 import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
 import { UpdateProfileDto, UserRegisterDto } from './dtos/user-auth.dto';
-import { cleanObject } from 'src/common/utils/sanitize.util';
+import { cleanObject, sanitizeUser } from 'src/common/utils/sanitize.util';
 import { response } from 'express';
 import { City } from 'src/city/entity/city.entity';
 import { Zone } from 'src/zone/entity/zone.entity';
@@ -224,8 +225,10 @@ export class UserAuthService {
         roles: roleNames,
       };
 
-      const token = this.jwtService.sign(payload, { expiresIn: '7d' });
+      const token = this.jwtService.sign(payload, { expiresIn: '30m' });
+      const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
       user.access_token = token;
+      user.refresh_token = refresh_token;
 
       await this.userRepository.save(user);
 
@@ -236,6 +239,7 @@ export class UserAuthService {
         message: 'User has been successfully logged in',
         data: {
           access_token: token,
+          refresh_token: refresh_token,
           user: cleanUser,
           role: userRole
             ? {
@@ -246,6 +250,45 @@ export class UserAuthService {
         },
       };
     } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  async refreshToken(refreshToken: string) {
+    const user = await this.userRepository.findOne({ where: { refresh_token: refreshToken } });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid referesh token');
+    }
+    try {
+      const role = await this.userRoleRepo.find({ where: { user_id: user.id }, relations: ['role'] })
+      const roleNames = role.map((r) => r.role.name);
+      const paylod = this.jwtService.verify(refreshToken, {
+        secret: 'user-secret-key',
+      });
+
+      const newAccessToken = this.jwtService.sign({
+        sub: user.id,
+        email: user.email,
+        roles: roleNames,
+      },
+        { expiresIn: '30m' },
+      );
+
+      user.access_token = newAccessToken;
+      await this.userRepository.save(user);
+      // const { password, access_token, refresh_token, fcm_token, ...cleanUser } = user;
+      return {
+        success: true,
+        message: 'Token refreshed successfully',
+        data: {
+          access_token: newAccessToken,
+          user: sanitizeUser(user),
+        },
+      };
+
+    } catch (err) {
+      console.error('Error refreshing token:', err);
       this.handleUnknown(err);
     }
   }
