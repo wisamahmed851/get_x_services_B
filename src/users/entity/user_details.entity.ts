@@ -23,10 +23,10 @@ export class UserDetails {
 
   @Column({ nullable: true })
   identity_card_back_url: string;
-  
+
 
   @Column()
-  user_id: number
+  user_id: number;
 
   @OneToOne(() => User, (user) => user.userDetails)
   @JoinColumn({ name: 'user_id' })
