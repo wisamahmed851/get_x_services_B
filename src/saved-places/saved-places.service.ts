@@ -12,6 +12,7 @@ import {
   UpdateSavedPlaceDto,
 } from './dtos/saved-place.dto';
 import { User } from 'src/users/entity/user.entity';
+import { Admin } from 'src/admin/entity/admin.entity';
 
 @Injectable()
 export class SavedPlacesService {
@@ -21,7 +22,10 @@ export class SavedPlacesService {
 
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-  ) {}
+
+    @InjectRepository(Admin)
+    private readonly adminRepo: Repository<Admin>,
+  ) { }
 
   private handleUnknown(err: unknown): never {
     if (err instanceof BadRequestException || err instanceof NotFoundException) {
@@ -70,6 +74,26 @@ export class SavedPlacesService {
         data: list,
       };
     } catch (err) {
+      this.handleUnknown(err);
+    }
+  }
+
+  async findAllForAdmin(adminId: number, userId?: number) {
+    try {
+      const query = this.savedRepo.createQueryBuilder('savedPlaces')
+        .leftJoinAndSelect('savedPlaces.user', 'user')
+        .orderBy('savedPlaces.created_at', 'DESC');
+      if (userId) {
+        query.where('savedPlaces.user_id = :userId', { userId });
+      }
+      const list = await query.getMany();
+      return {
+        success: true,
+        message: 'All saved places fetched successfully',
+        data: list,
+      };
+    } catch (err) {
+      console.error('Error fetching saved places for admin:', err);
       this.handleUnknown(err);
     }
   }

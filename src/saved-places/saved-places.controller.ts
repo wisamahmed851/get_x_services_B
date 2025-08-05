@@ -16,13 +16,15 @@ import {
   CreateSavedPlaceDto,
   UpdateSavedPlaceDto,
 } from './dtos/saved-place.dto';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { CurrentAdmin, CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { User } from 'src/users/entity/user.entity';
+import { AdminJwtAuthGuard } from 'src/auth/admin/admin-jwt.guard';
+import { Admin } from 'src/admin/entity/admin.entity';
 
 @UseGuards(UserJwtAuthGuard)
 @Controller('user/saved-places')
 export class SavedPlacesController {
-  constructor(private readonly savedService: SavedPlacesService) {}
+  constructor(private readonly savedService: SavedPlacesService) { }
 
   @Post('store')
   async create(@Body() dto: CreateSavedPlaceDto, @CurrentUser('id') id: number) {
@@ -33,7 +35,6 @@ export class SavedPlacesController {
   async findAll(@CurrentUser() user: User) {
     return this.savedService.findAll(user.id);
   }
-
   @Get('show/:id')
   async findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: User) {
     return this.savedService.findOne(id, user.id);

@@ -254,6 +254,60 @@ export class UserAuthService {
     }
   }
 
+  async currentLocation(userId: number, body: { langitude: number; latitude: number }) {
+    try {
+      if (!body.langitude || !body.latitude) {
+        throw new BadRequestException('Longitude and latitude are required');
+      }
+
+      const result = await this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set({
+          location: () => `ST_SetSRID(ST_MakePoint(${body.langitude}, ${body.latitude}), 4326)::geography`,
+        })
+        .where("id = :id", { id: userId })
+        .returning(`
+        id,
+        name,
+        email,
+        phone,
+        address,
+        ST_AsText(location) as location,
+        ST_X(location::geometry) as longitude,
+        ST_Y(location::geometry) as latitude
+      `)
+        .execute();
+
+      if (!result.affected) {
+        throw new NotFoundException("User not found");
+      }
+
+      const updatedUser = result.raw[0];
+
+      return {
+        success: true,
+        message: 'User location updated successfully',
+        data: {
+          // location: updatedUser.location, // "POINT(lng lat)"
+          User: {
+            id: updatedUser.id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            phone: updatedUser.phone,
+            address: updatedUser.address,
+            longitude: updatedUser.longitude,
+            latitude: updatedUser.latitude,
+          },
+        },
+      };
+    } catch (err) {
+      console.error('Error updating user location:', err);
+      this.handleUnknown(err);
+    }
+  }
+
+
   async refreshToken(refreshToken: string) {
     const user = await this.userRepository.findOne({ where: { refresh_token: refreshToken } });
 

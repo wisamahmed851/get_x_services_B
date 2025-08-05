@@ -71,6 +71,15 @@ export class UserAuthController {
     return await this.userAuthService.profile(user);
   }
 
+  @Post('current-location')
+  @UseGuards(UserJwtAuthGuard)
+  async currentLocation(
+    @CurrentUser() user: User,
+    @Body() body: { langitude: number; latitude: number },
+  ){
+    return await this.userAuthService.currentLocation(user.id, body);
+  }
+
   @UseGuards(UserJwtAuthGuard)
   @Post('update-profile')
   @UseInterceptors(FileInterceptor('image', multerConfig('uploads')))
