@@ -71,5 +71,4 @@ import { ZoneModule } from './zone/zone.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}
