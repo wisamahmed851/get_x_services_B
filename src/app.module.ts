@@ -7,7 +7,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserAuthModule } from './auth/user/user-auth.module';
 import { RolesModule } from './roles/roles.module';
 import { RolesSeederModule } from './roles/seeder/roles-seeder.module';
-import { RolesSeederService } from './roles/seeder/roles-seeder.service';
 import { AdminsModule } from './admin/admin.module';
 import { AdminAuthModule } from './auth/admin/admin-auth.module';
 import { PermissionsModule } from './permissions/permissions.module';
@@ -20,12 +19,11 @@ import { SavedPlacesModule } from './saved-places/saved-places.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { ComplaintsCategoryModule } from './complaints-category/complaints-category.module';
 import { UserAuthSeederModule } from './auth/user/seeder/user-auth-seeder.module';
-import { UserAuthSeederService } from './auth/user/seeder/user-auth-seeder.service';
 import { AdminAuthSeederModule } from './admin/seeder/admin-auth-seeder.module';
-import { AdminAuthSeederService } from './admin/seeder/admin-auth-seeder.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CityModule } from './city/city.module';
 import { ZoneModule } from './zone/zone.module';
+import { ServicesCategoryModule } from './services-category/services-category.module';
 
 @Module({
   imports: [
@@ -67,8 +65,9 @@ import { ZoneModule } from './zone/zone.module';
     AdminAuthSeederModule,
     CityModule,
     ZoneModule,
+    ServicesCategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
