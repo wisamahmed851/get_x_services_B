@@ -71,16 +71,5 @@ import { ZoneModule } from './zone/zone.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements OnApplicationBootstrap {
-  constructor(
-    private readonly rolesSeederService: RolesSeederService,
-    private readonly userAuthSeederService: UserAuthSeederService, // ✅ Inject it here
-    private readonly adminAuthSeederService: AdminAuthSeederService,
-  ) { }
-
-  async onApplicationBootstrap() {
-    await this.rolesSeederService.seed();
-    await this.userAuthSeederService.seed(); // ✅ Run user seeder
-    await this.adminAuthSeederService.seed();
-  }
+export class AppModule {
 }

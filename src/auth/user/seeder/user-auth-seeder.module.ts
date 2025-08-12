@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entity/user.entity';
 import { Role } from 'src/roles/entity/roles.entity';
@@ -10,4 +10,12 @@ import { UserAuthSeederService } from './user-auth-seeder.service';
   providers: [UserAuthSeederService],
   exports: [UserAuthSeederService],
 })
-export class UserAuthSeederModule {}
+export class UserAuthSeederModule implements OnApplicationBootstrap {
+  constructor(
+      private readonly userAuthSeederService: UserAuthSeederService, // ✅ Inject it here
+    ) { }
+  
+    async onApplicationBootstrap() {
+      await this.userAuthSeederService.seed(); // ✅ Run user seeder
+    }
+}

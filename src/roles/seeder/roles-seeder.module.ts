@@ -8,4 +8,12 @@ import { RolesSeederService } from './roles-seeder.service';
   providers: [RolesSeederService],
   exports: [RolesSeederService],
 })
-export class RolesSeederModule {}
+export class RolesSeederModule {
+  constructor(
+      private readonly rolesSeederService: RolesSeederService,
+    ) { }
+  
+    async onApplicationBootstrap() {
+      await this.rolesSeederService.seed();
+    }
+}
