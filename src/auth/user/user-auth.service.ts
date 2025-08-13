@@ -165,7 +165,13 @@ export class UserAuthService {
         success: true,
         message: 'User is registered successfully',
         data: {
-          user: userWithoutPassword,
+          user: {
+            name: userWithRole.name,
+            email: userWithRole.email,
+            phone: userWithRole.phone,
+            // password: userWithRole.password
+            role: userWithRole.userRoles
+          },
           role: role,
         },
       };
