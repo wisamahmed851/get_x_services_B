@@ -70,4 +70,4 @@ import { ServicesCategoryModule } from './services-category/services-category.mo
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

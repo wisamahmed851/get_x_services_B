@@ -21,7 +21,7 @@ export class UserRegisterDto {
   @IsNotEmpty()
   phone: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   gender: string;
 
   @IsNotEmpty()

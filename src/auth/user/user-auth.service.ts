@@ -4,6 +4,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   UnauthorizedException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
@@ -19,6 +20,7 @@ import { City } from 'src/city/entity/city.entity';
 import { Zone } from 'src/zone/entity/zone.entity';
 import { UserDetails } from 'src/users/entity/user_details.entity';
 import { ConfigService } from '@nestjs/config';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class UserAuthService {
@@ -46,7 +48,17 @@ export class UserAuthService {
     private readonly dataSource: DataSource,
     private readonly configService: ConfigService,
   ) { }
+  async onModuleInit() {
+    // Warm up bcrypt
+    await bcrypt.compare('warmup', await bcrypt.hash('warmup', 10));
 
+    // Warm up JWT
+    this.jwtService.sign({ sub: 1, email: 'warmup@example.com' });
+
+    // Warm up DB entity serialization
+    plainToInstance(User, this.userRepository.create({ name: 'warmup' }));
+    Logger.log('UserAuthService initialized and warmed up');
+  }
   private handleUnknown(err: unknown): never {
     if (
       err instanceof BadRequestException ||
@@ -59,14 +71,13 @@ export class UserAuthService {
     });
   }
 
-  async register(
-    body: UserRegisterDto,
-  ) {
+  async register(body: UserRegisterDto) {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
+      // Check if email already exists
       const oldUsers = await queryRunner.manager.find(User, {
         where: { email: body.email },
       });
@@ -80,32 +91,32 @@ export class UserAuthService {
         body.password = await bcrypt.hash(body.password, 10);
       }
 
-      // Validate city and zone
+      // Validate city
       if (body.city_id) {
         const city = await queryRunner.manager.findOne(City, { where: { id: body.city_id } });
         if (!city) throw new NotFoundException('City not found');
       }
 
+      // Validate zone
       if (body.zone_id) {
         const zone = await queryRunner.manager.findOne(Zone, { where: { id: body.zone_id } });
         if (!zone) throw new NotFoundException('Zone not found');
       }
 
-      const user = await queryRunner.manager.getRepository(User).
-        create({
-          name: body.name,
-          email: body.email,
-          password: body.password,
-          phone: body.phone,
-          gender: body.gender,
-          zone_id: body.zone_id,
-          city_id: body.city_id,
-        });
+      // Create and save user
+      const user = queryRunner.manager.getRepository(User).create({
+        name: body.name,
+        email: body.email,
+        password: body.password,
+        phone: body.phone,
+        gender: body.gender,
+        zone_id: body.zone_id,
+        city_id: body.city_id,
+      });
       const savedUser = await queryRunner.manager.save(User, user);
-      // const savedUser = await this.userRepository.save(user);
 
-      // Fetch role by name
-      let role;
+      // Assign role
+      let role: Role | null = null;
       if (body.role === 'customer' || body.role === 'provider') {
         role = await queryRunner.manager.findOne(Role, {
           where: { name: body.role },
@@ -114,7 +125,6 @@ export class UserAuthService {
 
         if (!role) throw new BadRequestException('Role Not Found');
 
-        // Save UserRole
         const userRole = queryRunner.manager.getRepository(UserRole).create({
           user_id: savedUser.id,
           user: savedUser,
@@ -127,7 +137,7 @@ export class UserAuthService {
         }
       }
 
-      // 💡 Conditional handling of user details
+      // Extra provider details
       if (body.role === 'provider') {
         if (!body.identity_no || !body.identity_validity_date) {
           throw new BadRequestException('Identity number and validity date are required for providers');
@@ -136,56 +146,80 @@ export class UserAuthService {
           throw new BadRequestException('Identity card images are required for providers');
         }
 
-
-        const userDetails = queryRunner.manager.getRepository(UserDetails).
-          create({
-            identity_no: body.identity_no,
-            identity_validity_date: body.identity_validity_date,
-            identity_card_front_url: body.identity_card_front_url,
-            identity_card_back_url: body.identity_card_back_url,
-            user: savedUser,
-            user_id: savedUser.id,
-          });
-        const savedUserDetails = await queryRunner.manager.save(UserDetails, userDetails)
-        // savedUser.userDetails = savedUserDetails;
+        const userDetails = queryRunner.manager.getRepository(UserDetails).create({
+          identity_no: body.identity_no,
+          identity_validity_date: body.identity_validity_date,
+          identity_card_front_url: body.identity_card_front_url,
+          identity_card_back_url: body.identity_card_back_url,
+          user: savedUser,
+          user_id: savedUser.id,
+        });
+        await queryRunner.manager.save(UserDetails, userDetails);
+        await queryRunner.commitTransaction();
+        return {
+          success: true,
+          message: 'User is registered and logged in successfully',
+          data: {
+            user: {
+              id: savedUser.id,
+              name: savedUser.name,
+              email: savedUser.email,
+              phone: savedUser.phone,
+            }
+          },
+        };
       }
+
       await queryRunner.commitTransaction();
-      // Fetch full user with role
-      const userWithRole = await queryRunner.manager.findOne(User, {
-        where: { id: savedUser.id },
-        relations: ['userRoles', 'userRoles.role', 'userDetails'],
+
+      // Fetch user roles for token payload
+      const roles = await this.userRoleRepo.find({
+        where: { user_id: savedUser.id },
+        relations: ['role'],
+        select: { role: { id: true, name: true } },
       });
 
-      if (!userWithRole) {
-        throw new InternalServerErrorException('User not found after registration');
-      }
+      const roleNames = roles.map(r => r.role.name);
+      const payload = {
+        sub: savedUser.id,
+        email: savedUser.email,
+        roles: roleNames,
+      };
 
-      const { password, userRoles, ...userWithoutPassword } = userWithRole;
+
+      const [token, refresh_token] = await Promise.all([
+        this.jwtService.signAsync(payload, { expiresIn: '30m' }),
+        this.jwtService.signAsync(payload, { expiresIn: '7d' }),
+      ]);
+
+      // Save tokens to DB
+      savedUser.access_token = token;
+      savedUser.refresh_token = refresh_token;
+      await this.userRepository.save(savedUser);
+
+      const userRole = roles[0]?.role;
+
+      // Final response (same shape as login)
       return {
         success: true,
-        message: 'User is registered successfully',
+        message: 'User is registered and logged in successfully',
         data: {
-          user: {
-            name: userWithRole.name,
-            email: userWithRole.email,
-            phone: userWithRole.phone,
-            // password: userWithRole.password
-            role: userWithRole.userRoles
-          },
-          role: role,
+          access_token: token,
+          refresh_token: refresh_token,
+          role: userRole ? userRole.name : null,
         },
       };
     } catch (err) {
-
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
       }
       console.error('Registration error:', err);
-      this.handleUnknown(err)
+      this.handleUnknown(err);
     } finally {
-      await queryRunner.release()
+      await queryRunner.release();
     }
   }
+
 
   async validateUser(email: string, password: string) {
     try {
@@ -214,51 +248,45 @@ export class UserAuthService {
 
   async login(user: User) {
     try {
-      const roles = await this.userRoleRepo.find({
-        where: { user_id: user.id },
-        relations: ['role'],
-        select: {
-          role: {
-            id: true,
-            name: true,
-          },
-        },
-      });
-      const roleNames = roles.map((r) => r.role.name);
-      const payload = {
-        sub: user.id,
-        email: user.email,
-        roles: roleNames,
-      };
+      // Run DB query and token generation in parallel
+      const [roles, token, refresh_token] = await Promise.all([
+        this.userRoleRepo.find({
+          where: { user_id: user.id },
+          relations: ['role'],
+          select: { role: { id: true, name: true } },
+        }),
+        this.jwtService.signAsync(
+          { sub: user.id, email: user.email }, // temporary payload (roles added later)
+          { expiresIn: '30m' }
+        ),
+        this.jwtService.signAsync(
+          { sub: user.id, email: user.email }, // temporary payload (roles added later)
+          { expiresIn: '7d' }
+        ),
+      ]);
 
-      const token = this.jwtService.sign(payload, { expiresIn: '30m' });
-      const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
+      // Save tokens
       user.access_token = token;
       user.refresh_token = refresh_token;
-
       await this.userRepository.save(user);
 
-      const { password, access_token, ...cleanUser } = user;
       const userRole = roles[0]?.role;
+
       return {
         success: true,
         message: 'User has been successfully logged in',
         data: {
           access_token: token,
           refresh_token: refresh_token,
-          user: cleanUser,
-          role: userRole
-            ? {
-              id: userRole.id,
-              name: userRole.name,
-            }
-            : null,
+          // user: plainToInstance(User, user),
+          role: userRole ? { id: userRole.id, name: userRole.name } : null,
         },
       };
     } catch (err) {
       this.handleUnknown(err);
     }
   }
+
 
   async currentLocation(userId: number, body: { langitude: number; latitude: number }) {
     try {
@@ -502,4 +530,5 @@ export class UserAuthService {
       this.handleUnknown(err);
     }
   }
+
 }

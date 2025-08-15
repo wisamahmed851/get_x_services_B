@@ -59,14 +59,14 @@ export class User {
   @Column({ nullable: true })
   city_id: number;
 
-  @ManyToOne(() => City, { onDelete: 'CASCADE', eager: true })
+  @ManyToOne(() => City, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'city_id' })
   city: City;
 
   @Column({ nullable: true })
   zone_id: number;
 
-  @ManyToOne(() => Zone, { onDelete: 'CASCADE', eager: true })
+  @ManyToOne(() => Zone, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'zone_id' })
   zone: Zone;
 
@@ -99,7 +99,7 @@ export class User {
 
   @Column({ type: 'date' })
   updated_at: string;
-  
+
 
   @BeforeInsert()
   setCreateDateParts() {
@@ -112,12 +112,15 @@ export class User {
   userDetails: UserDetails;
 
   @Column({ nullable: true })
+  @Exclude()
   access_token: string;
 
   @Column({ nullable: true })
+  @Exclude()
   refresh_token: string;
 
   @Column({ nullable: true })
+  @Exclude()
   fcm_token: string;
 
   @OneToMany(() => UserRole, (userRole) => userRole.role)
