@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/entity/user.entity';
 import { Role } from 'src/roles/entity/roles.entity';
@@ -122,7 +122,7 @@ export class UserAuthService {
           where: { name: body.role },
           select: { id: true, name: true },
         });
-
+ 
         if (!role) throw new BadRequestException('Role Not Found');
 
         const userRole = queryRunner.manager.getRepository(UserRole).create({
