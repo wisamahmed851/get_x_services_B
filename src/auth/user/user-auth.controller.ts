@@ -47,13 +47,15 @@ export class UserAuthController {
   @Post('register')
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'identity_card_front', maxCount: 1 },
-    { name: 'identity_card_back', maxCount: 1 }
+    { name: 'identity_card_back', maxCount: 1 },
+    { name: 'profile_image', maxCount: 1 },
   ], multerConfig('uploads')))
   async register(
     @Body() body: UserRegisterDto,
     @UploadedFiles() files: {
       identity_card_front?: Express.Multer.File;
       identity_card_back?: Express.Multer.File;
+      profile_image?: Express.Multer.File[];
     }
   ) {
     if (files?.identity_card_front?.[0]) {
@@ -61,6 +63,9 @@ export class UserAuthController {
     }
     if (files?.identity_card_back?.[0]) {
       body.identity_card_back_url = files.identity_card_back[0].filename;
+    }
+    if(files?.profile_image?.[0]){
+      body.image = files.profile_image[0].filename;
     }
     return this.userAuthService.register(body);
   }

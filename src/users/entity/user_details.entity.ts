@@ -12,10 +12,10 @@ export class UserDetails {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ nullable: true })
   identity_no: string;
 
-  @Column()
+  @Column({ nullable: true })
   identity_validity_date: Date;
 
   @Column({ nullable: true })

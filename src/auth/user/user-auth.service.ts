@@ -112,6 +112,7 @@ export class UserAuthService {
         gender: body.gender,
         zone_id: body.zone_id,
         city_id: body.city_id,
+        image: body.image,
       });
       const savedUser = await queryRunner.manager.save(User, user);
 
@@ -139,16 +140,12 @@ export class UserAuthService {
 
       // Extra provider details
       if (body.role === 'provider') {
-        if (!body.identity_no || !body.identity_validity_date) {
-          throw new BadRequestException('Identity number and validity date are required for providers');
-        }
         if (!body.identity_card_front_url && !body.identity_card_back_url) {
           throw new BadRequestException('Identity card images are required for providers');
         }
+        
 
         const userDetails = queryRunner.manager.getRepository(UserDetails).create({
-          identity_no: body.identity_no,
-          identity_validity_date: body.identity_validity_date,
           identity_card_front_url: body.identity_card_front_url,
           identity_card_back_url: body.identity_card_back_url,
           user: savedUser,

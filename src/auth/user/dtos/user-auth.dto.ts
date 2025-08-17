@@ -41,10 +41,7 @@ export class UserRegisterDto {
   zone_id: number;
 
   @IsOptional()
-  identity_no: string;
-
-  @IsOptional()
-  identity_validity_date: Date;
+  image: string;
 
   @IsOptional()
   identity_card_front_url: string;
