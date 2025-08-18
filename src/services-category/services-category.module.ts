@@ -3,10 +3,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { ServicesCategory } from "./entity/services-category.entity";
 import { ServicesCategoryService } from "./services-category.service";
 import { ServicesCategoryController } from "./services-category.controller";
+import { ServicesCategoryProviderController } from "./services-category.controller copy";
 
 @Module({
     imports: [TypeOrmModule.forFeature([ServicesCategory])],
-    controllers: [ServicesCategoryController],
+    controllers: [ServicesCategoryController, ServicesCategoryProviderController],
     providers: [ServicesCategoryService],
 })
-export class ServicesCategoryModule {}
+export class ServicesCategoryModule { }

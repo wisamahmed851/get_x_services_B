@@ -157,4 +157,43 @@ export class ServicesCategoryService {
             this.handleUnknown(error);
         }
     }
+
+    /* ─────────────────────────────── FIND ALL FOR LIST ─────────────────────────────── */
+    async findAllForList(limit?: number, offset?: number) {
+        try {
+            if (limit && offset != undefined) {
+                const [categories, total] = await this.servicesCategoryRepository.findAndCount({
+                    skip: offset,
+                    take: limit,
+                    // order: { created_at: "DESC" }
+                });
+                return {
+                    success: true,
+                    message: "Service categories retrieved with pagination",
+                    data: {
+                        total,
+                        limit: Number(limit),
+                        offset: Number(offset),
+                        data: categories,
+                    }
+                };
+            }
+
+            const categories = await this.servicesCategoryRepository.find();
+            if (this.isEmptyArray(categories)) {
+                return {
+                    success: true,
+                    message: "No service categories found",
+                    data: [],
+                };
+            }
+            return {
+                success: true,
+                message: "Service categories retrieved successfully",
+                data: categories,
+            };
+        } catch (error) {
+            this.handleUnknown(error);
+        }
+    }
 }
