@@ -32,7 +32,8 @@ export class ServicesCategoryProviderController {
     async getAllCategories(
         @Query("limit") limit?: number,
         @Query("offset") offset?: number,
+        @Query("page") page?: number
     ) {
-        return this.servicesCategoryService.findAllForList(limit, offset);
+        return this.servicesCategoryService.findAllForList(limit, offset, page);
     }
 }

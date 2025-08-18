@@ -159,8 +159,11 @@ export class ServicesCategoryService {
     }
 
     /* ─────────────────────────────── FIND ALL FOR LIST ─────────────────────────────── */
-    async findAllForList(limit?: number, offset?: number) {
+    async findAllForList(limit?: number, offset?: number, page?: number) {
         try {
+            if (page && limit) {
+                offset = (page - 1) * limit;
+            }
             if (limit && offset != undefined) {
                 const [categories, total] = await this.servicesCategoryRepository.findAndCount({
                     skip: offset,
@@ -170,12 +173,10 @@ export class ServicesCategoryService {
                 return {
                     success: true,
                     message: "Service categories retrieved with pagination",
-                    data: {
-                        total,
-                        limit: Number(limit),
-                        offset: Number(offset),
-                        data: categories,
-                    }
+                    total,
+                    limit: Number(limit),
+                    offset: Number(offset),
+                    data: categories,
                 };
             }
 
