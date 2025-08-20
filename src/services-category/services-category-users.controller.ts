@@ -20,7 +20,6 @@ import { UserJwtAuthGuard } from "src/auth/user/user-jwt.guard";
 import { QueryExpressionMap } from "typeorm/query-builder/QueryExpressionMap";
 
 @Controller('user/services-category')
-@UseGuards(UserJwtAuthGuard)
 export class ServicesCategoryProviderController {
     constructor(
         private readonly servicesCategoryService: ServicesCategoryService
