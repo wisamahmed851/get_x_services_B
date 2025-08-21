@@ -18,3 +18,4 @@ export declare class ServicesCategoryProviderController {
         offset?: undefined;
     }>;
 }
+
