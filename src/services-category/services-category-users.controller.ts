@@ -33,6 +33,7 @@ export class ServicesCategoryProviderController {
         @Query("offset") offset?: number,
         @Query("page") page?: number
     ) {
+        
         return this.servicesCategoryService.findAllForList(limit, offset, page);
     }
 }
