@@ -1,0 +1,32 @@
+import { UserDetails } from './user_details.entity';
+import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
+import { City } from 'src/city/entity/city.entity';
+import { Zone } from 'src/zone/entity/zone.entity';
+export declare class User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    phone: string;
+    address: string;
+    gender: string;
+    street: string;
+    district: string;
+    image: string;
+    location: string;
+    city_id: number;
+    city: City;
+    zone_id: number;
+    zone: Zone;
+    status: number;
+    isVarified: number;
+    isOnline: number;
+    created_at: string;
+    updated_at: string;
+    setCreateDateParts(): void;
+    userDetails: UserDetails;
+    access_token: string;
+    refresh_token: string;
+    fcm_token: string;
+    userRoles: UserRole[];
+}

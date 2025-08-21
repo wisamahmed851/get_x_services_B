@@ -1,0 +1,167 @@
+import { UsersService } from './users.service';
+import { CreateUserDto, UpdateUserDto } from './dtos/users.dto';
+import { UserDetailsDto } from './dtos/user_details.dto';
+import { User } from './entity/user.entity';
+import { Request } from 'express';
+export declare class UsersController {
+    private userService;
+    constructor(userService: UsersService);
+    Store(user: CreateUserDto, file: Express.Multer.File): Promise<{
+        success: boolean;
+        message: string;
+        data: User;
+    }>;
+    idnex(): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            id: number;
+            name: string;
+            email: string;
+            phone: string;
+            address: string;
+            gender: string;
+            street: string;
+            district: string;
+            image: string;
+            location: string;
+            city_id: number;
+            city: import("../city/entity/city.entity").City;
+            zone_id: number;
+            zone: import("../zone/entity/zone.entity").Zone;
+            status: number;
+            isVarified: number;
+            isOnline: number;
+            created_at: string;
+            updated_at: string;
+            userDetails: import("./entity/user_details.entity").UserDetails;
+            refresh_token: string;
+            fcm_token: string;
+            userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+        }[];
+    }>;
+    findOne(id: number): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            id: number;
+            name: string;
+            email: string;
+            phone: string;
+            address: string;
+            gender: string;
+            street: string;
+            district: string;
+            image: string;
+            location: string;
+            city_id: number;
+            city: import("../city/entity/city.entity").City;
+            zone_id: number;
+            zone: import("../zone/entity/zone.entity").Zone;
+            status: number;
+            isVarified: number;
+            isOnline: number;
+            created_at: string;
+            updated_at: string;
+            userDetails: import("./entity/user_details.entity").UserDetails;
+            refresh_token: string;
+            fcm_token: string;
+            userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+        };
+    }>;
+    findOneByEmail(data: any): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            id: number;
+            name: string;
+            email: string;
+            phone: string;
+            address: string;
+            gender: string;
+            street: string;
+            district: string;
+            image: string;
+            location: string;
+            city_id: number;
+            city: import("../city/entity/city.entity").City;
+            zone_id: number;
+            zone: import("../zone/entity/zone.entity").Zone;
+            status: number;
+            isVarified: number;
+            isOnline: number;
+            created_at: string;
+            updated_at: string;
+            userDetails: import("./entity/user_details.entity").UserDetails;
+            refresh_token: string;
+            fcm_token: string;
+            userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+        };
+    }>;
+    update(id: number, user: UpdateUserDto, file: Express.Multer.File): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            id: number;
+            name: string;
+            email: string;
+            phone: string;
+            address: string;
+            gender: string;
+            street: string;
+            district: string;
+            image: string;
+            location: string;
+            city_id: number;
+            city: import("../city/entity/city.entity").City;
+            zone_id: number;
+            zone: import("../zone/entity/zone.entity").Zone;
+            status: number;
+            isVarified: number;
+            isOnline: number;
+            created_at: string;
+            updated_at: string;
+            userDetails: import("./entity/user_details.entity").UserDetails;
+            refresh_token: string;
+            fcm_token: string;
+            userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+        };
+    }>;
+    statusChange(id: number): Promise<{
+        success: boolean;
+        message: string;
+        data: {
+            id: number;
+            name: string;
+            email: string;
+            phone: string;
+            address: string;
+            gender: string;
+            street: string;
+            district: string;
+            image: string;
+            location: string;
+            city_id: number;
+            city: import("../city/entity/city.entity").City;
+            zone_id: number;
+            zone: import("../zone/entity/zone.entity").Zone;
+            status: number;
+            isVarified: number;
+            isOnline: number;
+            created_at: string;
+            updated_at: string;
+            userDetails: import("./entity/user_details.entity").UserDetails;
+            refresh_token: string;
+            fcm_token: string;
+            userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+        };
+    }>;
+    userDetailsStore(data: UserDetailsDto, files: {
+        identity_card_front?: Express.Multer.File[];
+        identity_card_back?: Express.Multer.File[];
+    }, req: Request): Promise<{
+        success: boolean;
+        message: string;
+        data: import("./entity/user_details.entity").UserDetails;
+    }>;
+}
