@@ -36,9 +36,9 @@ export class UserAuthSeederService {
 
     await this.seedUser({
       name: 'Driver User',
-      email: 'driver@gmail.com',
+      email: 'provider@gmail.com',
       password: '123456789',
-      roleName: 'driver',
+      roleName: 'provider',
     });
   }
 
@@ -75,8 +75,8 @@ export class UserAuthSeederService {
       this.logger.log('customer is already added');
       return;
     }
-    if (email === 'driver@gmail.com') {
-      this.logger.log('Driver is already added');
+    if (email === 'provider@gmail.com') {
+      this.logger.log('provider is already added');
       return;
     }
     const newUser = this.userRepo.create({

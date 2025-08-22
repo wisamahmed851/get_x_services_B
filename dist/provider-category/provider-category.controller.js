@@ -16,6 +16,9 @@ exports.ProviderCategoryController = void 0;
 const common_1 = require("@nestjs/common");
 const provider_category_service_1 = require("./provider-category.service");
 const provider_category_dto_1 = require("./dtos/provider-category.dto");
+const user_jwt_guard_1 = require("../auth/user/user-jwt.guard");
+const roles_guard_1 = require("../common/guards/roles.guard");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let ProviderCategoryController = class ProviderCategoryController {
     providerCategoryService;
     constructor(providerCategoryService) {
@@ -33,8 +36,8 @@ let ProviderCategoryController = class ProviderCategoryController {
 };
 exports.ProviderCategoryController = ProviderCategoryController;
 __decorate([
-    (0, common_1.Post)(":providerId/assign"),
-    __param(0, (0, common_1.Param)("providerId")),
+    (0, common_1.Post)("/assign"),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, provider_category_dto_1.AssignCategoriesDto]),
@@ -56,6 +59,7 @@ __decorate([
 ], ProviderCategoryController.prototype, "getProvidersByCategory", null);
 exports.ProviderCategoryController = ProviderCategoryController = __decorate([
     (0, common_1.Controller)("provider-category"),
+    (0, common_1.UseGuards)(user_jwt_guard_1.UserJwtAuthGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [provider_category_service_1.ProviderCategoryService])
 ], ProviderCategoryController);
 //# sourceMappingURL=provider-category.controller.js.map
