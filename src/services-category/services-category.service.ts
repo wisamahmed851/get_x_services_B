@@ -164,7 +164,7 @@ export class ServicesCategoryService {
             if (page && limit) {
                 offset = (page - 1) * limit;
             }
-            
+
             if (limit && offset != undefined) {
                 const [categories, total] = await this.servicesCategoryRepository.findAndCount({
                     skip: offset,
@@ -180,6 +180,7 @@ export class ServicesCategoryService {
                         total,
                         limit: Number(limit),
                         offset: Number(offset),
+                        name: "arham",
                         categories,
                     },
                 };
