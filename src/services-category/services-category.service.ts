@@ -164,13 +164,14 @@ export class ServicesCategoryService {
             if (page && limit) {
                 offset = (page - 1) * limit;
             }
+            
             if (limit && offset != undefined) {
                 const [categories, total] = await this.servicesCategoryRepository.findAndCount({
                     skip: offset,
                     take: limit,
                     // order: { created_at: "DESC" }
                 });
-                
+
                 return {
                     success: true,
                     message: "Service categories retrieved with pagination",
