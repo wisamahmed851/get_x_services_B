@@ -9,6 +9,7 @@ export declare class ServicesCategoryProviderController {
             total: number;
             limit: number;
             offset: number;
+            name: string;
             categories: import("./entity/services-category.entity").ServicesCategory[];
         };
     } | {

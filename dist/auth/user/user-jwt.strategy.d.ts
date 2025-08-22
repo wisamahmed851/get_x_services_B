@@ -38,6 +38,7 @@ export declare class UserJwtStrategy extends UserJwtStrategy_base {
         refresh_token: string;
         fcm_token: string;
         userRoles: import("../../assig-roles-user/entity/user-role.entity").UserRole[];
+        providerCategories: import("../../provider-category/entity/provider-category.entity").ProviderCategory[];
     }>;
 }
 export {};

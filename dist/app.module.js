@@ -33,6 +33,7 @@ const schedule_1 = require("@nestjs/schedule");
 const city_module_1 = require("./city/city.module");
 const zone_module_1 = require("./zone/zone.module");
 const services_category_module_1 = require("./services-category/services-category.module");
+const provider_module_module_1 = require("./provider-category/provider-module.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -78,6 +79,7 @@ exports.AppModule = AppModule = __decorate([
             city_module_1.CityModule,
             zone_module_1.ZoneModule,
             services_category_module_1.ServicesCategoryModule,
+            provider_module_module_1.ProviderCategoryModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

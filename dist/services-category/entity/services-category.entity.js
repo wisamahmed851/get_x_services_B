@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ServicesCategory = void 0;
+const provider_category_entity_1 = require("../../provider-category/entity/provider-category.entity");
 const typeorm_1 = require("typeorm");
 let ServicesCategory = class ServicesCategory {
     id;
@@ -24,6 +25,7 @@ let ServicesCategory = class ServicesCategory {
         this.created_at = onlyDate;
         this.updated_at = onlyDate;
     }
+    providerCategories;
 };
 exports.ServicesCategory = ServicesCategory;
 __decorate([
@@ -61,6 +63,10 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ServicesCategory.prototype, "setCreateDateParts", null);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => provider_category_entity_1.ProviderCategory, (pc) => pc.servicescategory),
+    __metadata("design:type", Array)
+], ServicesCategory.prototype, "providerCategories", void 0);
 exports.ServicesCategory = ServicesCategory = __decorate([
     (0, typeorm_1.Entity)('services_category')
 ], ServicesCategory);

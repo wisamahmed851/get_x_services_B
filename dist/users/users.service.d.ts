@@ -47,6 +47,7 @@ export declare class UsersService {
             refresh_token: string;
             fcm_token: string;
             userRoles: UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         }[];
     }>;
     findOne(id: number): Promise<{
@@ -76,6 +77,7 @@ export declare class UsersService {
             refresh_token: string;
             fcm_token: string;
             userRoles: UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     findOnByEmail(email: string): Promise<{
@@ -105,6 +107,7 @@ export declare class UsersService {
             refresh_token: string;
             fcm_token: string;
             userRoles: UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     updateUser(id: number, dto: UpdateUserDto): Promise<{
@@ -134,6 +137,7 @@ export declare class UsersService {
             refresh_token: string;
             fcm_token: string;
             userRoles: UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     statusUpdate(id: number): Promise<{
@@ -163,6 +167,7 @@ export declare class UsersService {
             refresh_token: string;
             fcm_token: string;
             userRoles: UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     create_user_details(dto: UserDetailsDto, user: User): Promise<{

@@ -13,6 +13,7 @@ import { Exclude } from 'class-transformer';
 import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
 import { City } from 'src/city/entity/city.entity';
 import { Zone } from 'src/zone/entity/zone.entity';
+import { ProviderCategory } from 'src/provider-category/entity/provider-category.entity';
 
 @Entity()
 export class User {
@@ -126,4 +127,6 @@ export class User {
   @OneToMany(() => UserRole, (userRole) => userRole.role)
   userRoles: UserRole[];
 
+  @OneToMany(() => ProviderCategory, (pc) => pc.provider)
+  providerCategories: ProviderCategory[];
 }

@@ -16,6 +16,7 @@ const class_transformer_1 = require("class-transformer");
 const user_role_entity_1 = require("../../assig-roles-user/entity/user-role.entity");
 const city_entity_1 = require("../../city/entity/city.entity");
 const zone_entity_1 = require("../../zone/entity/zone.entity");
+const provider_category_entity_1 = require("../../provider-category/entity/provider-category.entity");
 let User = class User {
     id;
     name;
@@ -48,6 +49,7 @@ let User = class User {
     refresh_token;
     fcm_token;
     userRoles;
+    providerCategories;
 };
 exports.User = User;
 __decorate([
@@ -183,6 +185,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => user_role_entity_1.UserRole, (userRole) => userRole.role),
     __metadata("design:type", Array)
 ], User.prototype, "userRoles", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => provider_category_entity_1.ProviderCategory, (pc) => pc.provider),
+    __metadata("design:type", Array)
+], User.prototype, "providerCategories", void 0);
 exports.User = User = __decorate([
     (0, typeorm_1.Entity)()
 ], User);

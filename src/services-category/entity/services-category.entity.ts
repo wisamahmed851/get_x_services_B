@@ -1,4 +1,7 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+// services-category.entity.ts
+
+import { ProviderCategory } from "src/provider-category/entity/provider-category.entity";
+import { BeforeInsert, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('services_category')
 export class ServicesCategory {
@@ -33,4 +36,8 @@ export class ServicesCategory {
         this.created_at = onlyDate;
         this.updated_at = onlyDate;
     }
+
+    @OneToMany(() => ProviderCategory, (pc) => pc.servicescategory)
+    providerCategories: ProviderCategory[]
+
 }
