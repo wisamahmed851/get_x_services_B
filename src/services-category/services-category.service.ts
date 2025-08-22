@@ -170,6 +170,7 @@ export class ServicesCategoryService {
                     take: limit,
                     // order: { created_at: "DESC" }
                 });
+                
                 return {
                     success: true,
                     message: "Service categories retrieved with pagination",
