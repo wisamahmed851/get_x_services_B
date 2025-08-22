@@ -173,10 +173,13 @@ export class ServicesCategoryService {
                 return {
                     success: true,
                     message: "Service categories retrieved with pagination",
-                    total,
-                    limit: Number(limit),
-                    offset: Number(offset),
-                    data: categories,
+
+                    data: {
+                        categories,
+                        total,
+                        limit: Number(limit),
+                        offset: Number(offset),
+                    },
                 };
             }
 
