@@ -23,8 +23,9 @@ export class ProviderCategoryController {
     }
 
     // Get categories for a provider
-    @Get(":providerId/categories")
-    async getProviderCategories(@Param("providerId") providerId: number) {
+    @Get("/categories")
+    async getProviderCategories(
+        @CurrentUser('id') providerId: number) {
         return this.providerCategoryService.getProviderCategories(providerId);
     }
 

@@ -44,8 +44,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProviderCategoryController.prototype, "assignCategories", null);
 __decorate([
-    (0, common_1.Get)(":providerId/categories"),
-    __param(0, (0, common_1.Param)("providerId")),
+    (0, common_1.Get)("/categories"),
+    __param(0, (0, current_user_decorator_1.CurrentUser)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)

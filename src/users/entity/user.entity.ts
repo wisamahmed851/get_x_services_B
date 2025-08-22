@@ -124,7 +124,7 @@ export class User {
   @Exclude()
   fcm_token: string;
 
-  @OneToMany(() => UserRole, (userRole) => userRole.role)
+  @OneToMany(() => UserRole, (userRole) => userRole.user)
   userRoles: UserRole[];
 
   @OneToMany(() => ProviderCategory, (pc) => pc.provider)

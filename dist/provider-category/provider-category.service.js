@@ -38,6 +38,7 @@ let ProviderCategoryService = class ProviderCategoryService {
     }
     async assignCategories(providerId, dto) {
         try {
+            console.log("Category", providerId);
             const provider = await this.userRepository.findOne({
                 where: { id: providerId },
                 relations: ["userRoles", "userRoles.role"],
@@ -45,6 +46,7 @@ let ProviderCategoryService = class ProviderCategoryService {
             if (!provider) {
                 throw new common_1.NotFoundException("Provider not found");
             }
+            console.log("Provider", provider);
             const isProvider = provider.userRoles.some((userRole) => userRole.role && userRole.role.name === "provider");
             if (!isProvider) {
                 throw new common_1.BadRequestException("User is not a provider");
@@ -66,7 +68,7 @@ let ProviderCategoryService = class ProviderCategoryService {
             return {
                 success: true,
                 message: "Categories assigned to provider successfully",
-                data: saved,
+                data: [],
             };
         }
         catch (error) {

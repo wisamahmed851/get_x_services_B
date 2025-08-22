@@ -39,6 +39,7 @@ export class ProviderCategoryService {
     // Assign multiple categories to a provider
     async assignCategories(providerId: number, dto: AssignCategoriesDto) {
         try {
+            console.log("Category", providerId);
             const provider = await this.userRepository.findOne({
                 where: { id: providerId },
                 relations: ["userRoles", "userRoles.role"],
@@ -46,6 +47,7 @@ export class ProviderCategoryService {
             if (!provider) {
                 throw new NotFoundException("Provider not found");
             }
+            console.log("Provider", provider);
 
             // Ensure role is provider
             const isProvider = provider.userRoles.some(
@@ -79,7 +81,7 @@ export class ProviderCategoryService {
             return {
                 success: true,
                 message: "Categories assigned to provider successfully",
-                data: saved,
+                data: /* saved */[],
             };
         } catch (error) {
             this.handleUnknown(error);

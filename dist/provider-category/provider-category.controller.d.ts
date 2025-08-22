@@ -6,7 +6,7 @@ export declare class ProviderCategoryController {
     assignCategories(providerId: number, dto: AssignCategoriesDto): Promise<{
         success: boolean;
         message: string;
-        data: import("./entity/provider-category.entity").ProviderCategory[];
+        data: never[];
     } | {
         success: boolean;
         message: any;

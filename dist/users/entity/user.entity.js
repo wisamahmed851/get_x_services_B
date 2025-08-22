@@ -182,7 +182,7 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "fcm_token", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => user_role_entity_1.UserRole, (userRole) => userRole.role),
+    (0, typeorm_1.OneToMany)(() => user_role_entity_1.UserRole, (userRole) => userRole.user),
     __metadata("design:type", Array)
 ], User.prototype, "userRoles", void 0);
 __decorate([

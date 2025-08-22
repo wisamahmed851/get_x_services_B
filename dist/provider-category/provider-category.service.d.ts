@@ -12,7 +12,7 @@ export declare class ProviderCategoryService {
     assignCategories(providerId: number, dto: AssignCategoriesDto): Promise<{
         success: boolean;
         message: string;
-        data: ProviderCategory[];
+        data: never[];
     } | {
         success: boolean;
         message: any;
