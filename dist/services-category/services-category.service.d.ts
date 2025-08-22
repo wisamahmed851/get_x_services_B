@@ -35,16 +35,15 @@ export declare class ServicesCategoryService {
     findAllForList(limit?: number, offset?: number, page?: number): Promise<{
         success: boolean;
         message: string;
-        total: number;
-        limit: number;
-        offset: number;
-        data: ServicesCategory[];
+        data: {
+            total: number;
+            limit: number;
+            offset: number;
+            categories: ServicesCategory[];
+        };
     } | {
         success: boolean;
         message: string;
         data: ServicesCategory[];
-        total?: undefined;
-        limit?: undefined;
-        offset?: undefined;
     }>;
 }

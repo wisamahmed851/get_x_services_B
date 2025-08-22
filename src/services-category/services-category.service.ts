@@ -175,10 +175,10 @@ export class ServicesCategoryService {
                     message: "Service categories retrieved with pagination",
 
                     data: {
-                        categories,
                         total,
                         limit: Number(limit),
                         offset: Number(offset),
+                        categories,
                     },
                 };
             }

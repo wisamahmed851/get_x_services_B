@@ -155,10 +155,12 @@ let ServicesCategoryService = class ServicesCategoryService {
                 return {
                     success: true,
                     message: "Service categories retrieved with pagination",
-                    total,
-                    limit: Number(limit),
-                    offset: Number(offset),
-                    data: categories,
+                    data: {
+                        total,
+                        limit: Number(limit),
+                        offset: Number(offset),
+                        categories,
+                    },
                 };
             }
             const categories = await this.servicesCategoryRepository.find();

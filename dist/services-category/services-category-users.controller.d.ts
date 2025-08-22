@@ -5,16 +5,15 @@ export declare class ServicesCategoryProviderController {
     getAllCategories(limit?: number, offset?: number, page?: number): Promise<{
         success: boolean;
         message: string;
-        total: number;
-        limit: number;
-        offset: number;
-        data: import("./entity/services-category.entity").ServicesCategory[];
+        data: {
+            total: number;
+            limit: number;
+            offset: number;
+            categories: import("./entity/services-category.entity").ServicesCategory[];
+        };
     } | {
         success: boolean;
         message: string;
         data: import("./entity/services-category.entity").ServicesCategory[];
-        total?: undefined;
-        limit?: undefined;
-        offset?: undefined;
     }>;
 }
