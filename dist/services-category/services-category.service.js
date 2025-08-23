@@ -159,7 +159,6 @@ let ServicesCategoryService = class ServicesCategoryService {
                         total,
                         limit: Number(limit),
                         offset: Number(offset),
-                        name: "arham Azeem",
                         categories,
                     },
                 };
