@@ -2,6 +2,7 @@ import { UserDetails } from './user_details.entity';
 import { UserRole } from 'src/assig-roles-user/entity/user-role.entity';
 import { City } from 'src/city/entity/city.entity';
 import { Zone } from 'src/zone/entity/zone.entity';
+import { ProviderCategory } from 'src/provider-category/entity/provider-category.entity';
 export declare class User {
     id: number;
     name: string;
@@ -29,4 +30,5 @@ export declare class User {
     refresh_token: string;
     fcm_token: string;
     userRoles: UserRole[];
+    providerCategories: ProviderCategory[];
 }

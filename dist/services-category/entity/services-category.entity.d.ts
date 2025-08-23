@@ -1,3 +1,4 @@
+import { ProviderCategory } from "src/provider-category/entity/provider-category.entity";
 export declare class ServicesCategory {
     id: number;
     name: string;
@@ -6,4 +7,5 @@ export declare class ServicesCategory {
     created_at: string;
     updated_at: string;
     setCreateDateParts(): void;
+    providerCategories: ProviderCategory[];
 }

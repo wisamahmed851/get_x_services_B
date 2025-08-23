@@ -24,6 +24,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CityModule } from './city/city.module';
 import { ZoneModule } from './zone/zone.module';
 import { ServicesCategoryModule } from './services-category/services-category.module';
+import { ProviderCategoryModule } from './provider-category/provider-module.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { ServicesCategoryModule } from './services-category/services-category.mo
     CityModule,
     ZoneModule,
     ServicesCategoryModule,
+    ProviderCategoryModule
   ],
   controllers: [AppController],
   providers: [AppService],

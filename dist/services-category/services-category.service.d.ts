@@ -39,6 +39,7 @@ export declare class ServicesCategoryService {
             total: number;
             limit: number;
             offset: number;
+            name: string;
             categories: ServicesCategory[];
         };
     } | {

@@ -38,6 +38,7 @@ export declare class UsersController {
             refresh_token: string;
             fcm_token: string;
             userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         }[];
     }>;
     findOne(id: number): Promise<{
@@ -67,6 +68,7 @@ export declare class UsersController {
             refresh_token: string;
             fcm_token: string;
             userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     findOneByEmail(data: any): Promise<{
@@ -96,6 +98,7 @@ export declare class UsersController {
             refresh_token: string;
             fcm_token: string;
             userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     update(id: number, user: UpdateUserDto, file: Express.Multer.File): Promise<{
@@ -125,6 +128,7 @@ export declare class UsersController {
             refresh_token: string;
             fcm_token: string;
             userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     statusChange(id: number): Promise<{
@@ -154,6 +158,7 @@ export declare class UsersController {
             refresh_token: string;
             fcm_token: string;
             userRoles: import("../assig-roles-user/entity/user-role.entity").UserRole[];
+            providerCategories: import("../provider-category/entity/provider-category.entity").ProviderCategory[];
         };
     }>;
     userDetailsStore(data: UserDetailsDto, files: {
