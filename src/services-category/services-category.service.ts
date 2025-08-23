@@ -175,12 +175,10 @@ export class ServicesCategoryService {
                 return {
                     success: true,
                     message: "Service categories retrieved with pagination",
-
                     data: {
                         total,
                         limit: Number(limit),
                         offset: Number(offset),
-                        name: "arham Azeem",
                         categories,
                     },
                 };
